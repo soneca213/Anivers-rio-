@@ -26,17 +26,18 @@
             align-items: center;
         }
 
-        /* LUZ DE FUNDO PULSANTE */
-        #luzBatida {
+        /* --- LUZ PULSANTE (BACKING LIGHT) --- */
+        .luz-batida {
             position: fixed;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(196, 0, 255, 0.4) 0%, rgba(122, 0, 255, 0) 70%);
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(196, 0, 255, 0.6) 0%, rgba(122, 0, 255, 0) 70%);
             border-radius: 50%;
-            filter: blur(80px);
+            filter: blur(60px);
             z-index: 0;
             pointer-events: none;
-            display: none; /* Só aparece após o play */
+            opacity: 0;
+            transition: opacity 1s;
         }
 
         /* CONTAINER ENVELOPE */
@@ -87,7 +88,10 @@
             border-bottom: 100px solid #4b0082;
         }
 
-        .envelope.open::before { transform: rotateX(180deg); z-index: 0; }
+        .envelope.open::before {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
 
         .instrucao {
             color: white;
@@ -100,7 +104,10 @@
             text-transform: uppercase;
         }
 
-        @keyframes piscar { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
 
         /* CARTÃO DE CONVITE */
         .card-luxo {
@@ -142,26 +149,28 @@
         }
 
         @keyframes brilhoNome { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+        .frase { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: #6d4c7d; margin-bottom: 10px; }
         .infos { font-size: 1.1rem; line-height: 1.4; color: #333; background: #f8f0ff; padding: 15px; border-radius: 20px; }
         .infos b { display: block; color: #7b1fa2; font-size: 1.2rem; margin: 5px 0; }
-        
-        button { padding: 15px; background: linear-gradient(45deg, #7b1fa2, #c400ff); color: white; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; transition: 0.3s; width: 80%; margin: 0 auto; }
-        input { padding: 12px; border: none; border-bottom: 2px solid #aa00ff; background: transparent; text-align: center; width: 80%; margin: 10px auto; outline: none; }
+        input { padding: 12px; border: none; border-bottom: 2px solid #aa00ff; background: transparent; text-align: center; font-size: 1rem; outline: none; width: 80%; margin: 10px auto; }
+        button { padding: 15px; background: linear-gradient(45deg, #7b1fa2, #c400ff); color: white; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; transition: 0.3s; width: 80%; margin: 0 auto; box-shadow: 0 5px 15px rgba(123, 31, 162, 0.4); }
+        button:hover { transform: scale(1.05); }
+        .nao-ir { color: #7a00ff; cursor: pointer; font-weight: 600; font-size: 0.8rem; text-decoration: underline; }
 
-        /* ESTRELAS */
         #sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .star { position: absolute; transition: transform 0.1s ease-out; }
+        .star { position: absolute; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="luzBatida"></div>
-    <div id="sky"></div>
+    <div class="luz-batida" id="luzBatida"></div>
 
     <audio id="musica" loop crossorigin="anonymous">
         <source src="AUD-20260223-WA0003.mp3" type="audio/mpeg">
     </audio>
+
+    <div id="sky"></div>
 
     <div class="wrapper-total" id="envelopeWrapper" onclick="iniciar()">
         <div class="envelope" id="envelopeAnim"></div>
@@ -170,19 +179,21 @@
 
     <div class="card-luxo" id="convite">
         <p class="idade">17 ANOS</p>
-        <h1 class="nome">Thaís Vitória</h1>
+        <h1 class="nome">Thaís Vitoria</h1>
+        <p class="frase">Celebrar a vida é colecionar momentos ao lado de quem amamos.</p>
         <div class="infos">
-            📅 <b> 18 DE MARÇO DE 2026</b>
+            📅 <b> 28 DE MARÇO DE 2026</b>
             ⏰ <b>ÀS 18:00 HORAS</b>
-        </b> Até 20:00 </b>
+            ⏰ <b>ATÉ 20:00 HORAS</b>
             📍 <b>RUA DO CASARÃO, Nº 43 </b>
         </div>
         <input type="text" id="nomeConvidado" placeholder="Seu nome completo">
         <button onclick="confirmar(true)">CONFIRMAR PRESENÇA</button>
+        <p class="nao-ir" onclick="confirmar(false)">Não poderei ir</p>
     </div>
 
     <script>
-        let audioCtx, analyser, dataArray;
+        let audioContext, analyser, dataArray, source;
 
         function iniciar() {
             const wrapper = document.getElementById('envelopeWrapper');
@@ -191,11 +202,14 @@
             const som = document.getElementById('musica');
             const luz = document.getElementById('luzBatida');
 
-            // Inicia Áudio e Visualizador
-            som.play();
-            setupAudio(som);
-            
-            luz.style.display = 'block';
+            // Ativa a luz
+            luz.style.opacity = "1";
+
+            // Tenta tocar a música
+            som.play().then(() => {
+                setupVisualizer(som);
+            }).catch(e => console.log("Erro ao tocar:", e));
+
             env.classList.add('open');
 
             setTimeout(() => {
@@ -208,43 +222,51 @@
             }, 800);
         }
 
-        function setupAudio(audioElement) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const source = audioCtx.createMediaElementSource(audioElement);
-            analyser = audioCtx.createAnalyser();
+        // Função para configurar o analisador de áudio
+        function setupVisualizer(audioElement) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            source = audioContext.createMediaElementSource(audioElement);
+            analyser = audioContext.createAnalyser();
+
             source.connect(analyser);
-            analyser.connect(audioCtx.destination);
-            analyser.fftSize = 128;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            renderBatida();
+            analyser.connect(audioContext.destination);
+
+            analyser.fftSize = 64; // Tamanho pequeno para focar nos graves
+            const bufferLength = analyser.frequencyBinCount;
+            dataArray = new Uint8Array(bufferLength);
+
+            animarLuz();
         }
 
-        function renderBatida() {
-            analyser.getByteFrequencyData(dataArray);
-            
-            // Foca nos graves (primeiras barras do array)
-            let volume = dataArray[2]; 
-            let scale = 1 + (volume / 200);
-            let brilho = volume / 255;
-
-            // Pulsa a luz de fundo
+        function animarLuz() {
             const luz = document.getElementById('luzBatida');
-            luz.style.transform = `scale(${scale})`;
-            luz.style.opacity = 0.2 + brilho;
+            
+            function loop() {
+                analyser.getByteFrequencyData(dataArray);
 
-            // Faz as estrelas pulsarem (escala e brilho)
-            const estrelas = document.querySelectorAll('.star');
-            estrelas.forEach(s => {
-                s.style.filter = `drop-shadow(0 0 ${volume/10}px white)`;
-                s.style.transform = `scale(${0.5 + (volume/150)})`;
-            });
+                // Pega a média das frequências baixas (batida/grave)
+                let sum = 0;
+                for(let i = 0; i < 5; i++) {
+                    sum += dataArray[i];
+                }
+                let average = sum / 5;
 
-            requestAnimationFrame(renderBatida);
+                // Transforma o volume em escala (pulsação)
+                // O valor 1.5 controla o tamanho máximo da luz
+                let scale = 1 + (average / 150); 
+                let opacity = 0.2 + (average / 255);
+
+                luz.style.transform = `scale(${scale})`;
+                luz.style.opacity = opacity;
+
+                requestAnimationFrame(loop);
+            }
+            loop();
         }
 
         function chuvaDeEstrelas() {
             const sky = document.getElementById('sky');
-            const cores = ['#6a00ff', '#c400ff', '#ffffff'];
+            const cores = ['#6a00ff', '#9c00ff', '#c400ff', '#ffffff'];
             setInterval(() => {
                 const s = document.createElement('div');
                 s.className = 'star';
@@ -252,21 +274,21 @@
                 s.style.left = Math.random() * 100 + "vw";
                 s.style.top = "-20px";
                 s.style.color = cores[Math.floor(Math.random() * cores.length)];
-                s.style.fontSize = (Math.random() * 15 + 10) + "px";
-                
-                // Animação de queda
-                const duration = Math.random() * 3 + 2;
-                s.style.animation = `fall ${duration}s linear forwards`;
-                
+                s.style.fontSize = (Math.random() * 12 + 8) + "px";
+                s.style.animationDuration = (Math.random() * 3 + 2) + "s";
                 sky.appendChild(s);
-                setTimeout(() => s.remove(), duration * 1000);
-            }, 200);
+                setTimeout(() => s.remove(), 4000);
+            }, 150);
         }
 
         function confirmar(vai) {
             const nome = document.getElementById("nomeConvidado").value;
-            if(!nome){ alert("Digite seu nome!"); return; }
-            window.open(`https://wa.me/558189659847?text=Confirmado! ${nome}`, "_blank");
+            if(!nome){ alert("Por favor, digite seu nome primeiro."); return; }
+            const numero = "558189659847";
+            const mensagem = vai ? 
+                `Confirmado! ✅ ${nome} estará presente na festa de 17 anos da Thaís Vitória!` : 
+                `Aviso: ${nome} infelizmente não poderá comparecer.`;
+            window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`, "_blank");
         }
     </script>
 </body>
