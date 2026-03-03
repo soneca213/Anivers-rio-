@@ -3,44 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>17 Anos - Thaís Vitória</title>
+    <title>17 Anos - Thaís (Missão Pirata)</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Montserrat:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Montserrat:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary: #7a00ff;
-            --secondary: #c400ff;
-            --dark: #12001c;
+            --gold: #d4af37;
+            --wood: #3e2723;
+            --blood: #8b0000;
+            --parchment: #f4e4bc;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             min-height: 100vh;
-            background: radial-gradient(circle at center, #2a003f, #12001c);
-            font-family: 'Montserrat', sans-serif;
+            background: radial-gradient(circle at center, #2c1e14, #000000);
+            font-family: 'Special Elite', system-ui;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* --- LUZ PULSANTE (BACKING LIGHT) --- */
+        /* --- EFEITO DE CANHÃO (FLASH) --- */
         .luz-batida {
             position: fixed;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(196, 0, 255, 0.6) 0%, rgba(122, 0, 255, 0) 70%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, rgba(0,0,0,0) 70%);
             border-radius: 50%;
-            filter: blur(60px);
+            filter: blur(80px);
             z-index: 0;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 1s;
         }
 
-        /* CONTAINER ENVELOPE */
+        /* CONTAINER BAÚ */
         .wrapper-total {
             display: flex;
             flex-direction: column;
@@ -59,57 +59,42 @@
 
         .envelope {
             position: relative;
-            width: 300px;
-            height: 200px;
-            background-color: #3d005e;
-            perspective: 1000px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            width: 280px;
+            height: 180px;
+            background-color: var(--wood);
+            border: 4px solid #2a1b0a;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
         }
 
+        /* Lacre de Caveira */
         .envelope::before {
-            content: "";
+            content: "☠️";
             position: absolute;
-            top: 0; left: 0;
-            z-index: 3;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
-            border-top: 100px solid var(--primary);
-            transform-origin: top;
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            z-index: 5;
+            transition: 0.5s;
         }
 
-        .envelope::after {
-            content: "";
-            position: absolute;
-            bottom: 0; left: 0;
-            z-index: 2;
-            border-left: 150px solid transparent;
-            border-right: 150px solid transparent;
-            border-bottom: 100px solid #4b0082;
-        }
-
-        .envelope.open::before {
-            transform: rotateX(180deg);
-            z-index: 0;
-        }
+        .envelope.open::before { opacity: 0; }
 
         .instrucao {
-            color: white;
+            color: var(--gold);
             font-weight: bold;
-            letter-spacing: 3px;
-            font-size: 0.9rem;
+            letter-spacing: 2px;
+            font-family: 'Pirata One', cursive;
+            font-size: 1.5rem;
             text-align: center;
-            text-shadow: 0 0 10px var(--primary);
             animation: piscar 1.5s infinite;
-            text-transform: uppercase;
         }
 
         @keyframes piscar {
-            0%, 100% { opacity: 1; }
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--gold); }
             50% { opacity: 0.4; }
         }
 
-        /* CARTÃO DE CONVITE */
+        /* PERGAMINHO DE CONVITE */
         .card-luxo {
             position: fixed;
             display: none;
@@ -117,48 +102,85 @@
             width: 90%;
             max-width: 450px;
             max-height: 85vh;
-            background: rgba(255, 255, 255, 0.98);
-            border-radius: 35px;
-            padding: 30px 20px;
+            background: var(--parchment);
+            background-image: url('https://www.transparenttextures.com/patterns/paper.png');
+            border-radius: 5px;
+            padding: 40px 25px;
             flex-direction: column;
             gap: 15px;
             text-align: center;
-            border: 3px solid var(--primary);
-            box-shadow: 0 0 30px rgba(122, 0, 255, 0.5);
+            border: 10px solid #5d4037;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
             overflow-y: auto;
-            animation: aparecer 1.2s ease-out forwards;
+            animation: desenrolar 1.2s ease-out forwards;
         }
 
-        @keyframes aparecer {
-            from { opacity: 0; transform: translateY(50px) scale(0.9); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        @keyframes desenrolar {
+            from { opacity: 0; transform: scaleY(0); }
+            to { opacity: 1; transform: scaleY(1); }
         }
 
-        .idade { font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 6px; color: #7b1fa2; }
+        .idade { font-family: 'Pirata One', cursive; font-size: 2.5rem; color: var(--blood); margin-bottom: -10px; }
         .nome {
-            font-family: 'Pinyon Script', cursive;
-            font-size: 4rem;
-            line-height: 1;
-            background: linear-gradient(90deg, #6a00ff, #c400ff, #6a00ff);
-            background-size: 200% auto;
-            color: transparent;
-            -webkit-background-clip: text;
-            background-clip: text;
-            animation: brilhoNome 4s linear infinite;
+            font-family: 'Pirata One', cursive;
+            font-size: 4.5rem;
+            color: #1a1a1a;
+            text-transform: uppercase;
             margin: 10px 0;
+            border-bottom: 2px dashed #5d4037;
         }
 
-        @keyframes brilhoNome { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
-        .frase { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: #6d4c7d; margin-bottom: 10px; }
-        .infos { font-size: 1.1rem; line-height: 1.4; color: #333; background: #f8f0ff; padding: 15px; border-radius: 20px; }
-        .infos b { display: block; color: #7b1fa2; font-size: 1.2rem; margin: 5px 0; }
-        input { padding: 12px; border: none; border-bottom: 2px solid #aa00ff; background: transparent; text-align: center; font-size: 1rem; outline: none; width: 80%; margin: 10px auto; }
-        button { padding: 15px; background: linear-gradient(45deg, #7b1fa2, #c400ff); color: white; border: none; border-radius: 50px; font-weight: 700; cursor: pointer; transition: 0.3s; width: 80%; margin: 0 auto; box-shadow: 0 5px 15px rgba(123, 31, 162, 0.4); }
-        button:hover { transform: scale(1.05); }
-        .nao-ir { color: #7a00ff; cursor: pointer; font-weight: 600; font-size: 0.8rem; text-decoration: underline; }
+        .frase { font-style: italic; font-size: 0.9rem; color: #4e342e; margin-bottom: 10px; font-weight: bold; }
+        
+        .infos { 
+            font-size: 1rem; 
+            line-height: 1.6; 
+            color: #1a1a1a; 
+            background: rgba(0,0,0,0.05); 
+            padding: 15px; 
+            border: 1px solid #d7ccc8;
+        }
+        .infos b { color: var(--blood); font-size: 1.1rem; }
+
+        .obs {
+            font-size: 0.8rem;
+            color: #8b0000;
+            background: #ffecb3;
+            padding: 10px;
+            border-left: 5px solid var(--blood);
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        input { 
+            padding: 12px; 
+            border: 2px solid #5d4037; 
+            background: rgba(255,255,255,0.5); 
+            text-align: center; 
+            font-family: 'Special Elite';
+            width: 80%; 
+            margin: 10px auto; 
+        }
+
+        button { 
+            padding: 15px; 
+            background: var(--blood); 
+            color: white; 
+            border: none; 
+            font-family: 'Pirata One';
+            font-size: 1.5rem;
+            cursor: pointer; 
+            transition: 0.3s; 
+            width: 80%; 
+            margin: 0 auto; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4); 
+        }
+        button:hover { background: #5a0000; transform: translateY(-3px); }
+
+        .nao-ir { color: #5d4037; cursor: pointer; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; }
 
         #sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .star { position: absolute; animation: fall linear infinite; }
+        .coin { position: absolute; animation: fall linear infinite; }
         @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
     </style>
 </head>
@@ -174,22 +196,28 @@
 
     <div class="wrapper-total" id="envelopeWrapper" onclick="iniciar()">
         <div class="envelope" id="envelopeAnim"></div>
-        <div class="instrucao">TOQUE PARA ABRIR</div>
+        <div class="instrucao">ABRIR MAPA DO TESOURO</div>
     </div>
 
     <div class="card-luxo" id="convite">
-        <p class="idade">17 ANOS</p>
-        <h1 class="nome">Thaís Vitoria</h1>
-        <p class="frase">Celebrar a vida é colecionar momentos ao lado de quem amamos.</p>
+        <p class="idade">A TRIPULAÇÃO DOS 17 ANOS</p>
+        <h1 class="nome">Thaís</h1>
+        <p class="frase">"Nem todo tesouro é prata e ouro, mas minha festa será preciosa com você!"</p>
+        
         <div class="infos">
-            📅 <b> 28 DE MARÇO DE 2026</b>
-            ⏰ <b>ÀS 18:00 HORAS</b>
-            ⏰ <b>ATÉ 20:00 HORAS</b>
-            📍 <b>RUA DO CASARÃO, Nº 43 </b>
+            📅 <b> 14 DE MARÇO DE 2026</b><br>
+            ⏰ <b>A PARTIR DAS 14:00 HORAS</b><br>
+            📍 <b>LOCAL: CAPITAL GANCHO</b>
         </div>
-        <input type="text" id="nomeConvidado" placeholder="Seu nome completo">
+
+        <div class="obs">
+            <strong>⚠️ AVISO AOS MARUJOS:</strong><br>
+            É necessário levar dobrões (dinheiro) para o transporte e alimentação no local.
+        </div>
+
+        <input type="text" id="nomeConvidado" placeholder="Nome do Marujo">
         <button onclick="confirmar(true)">CONFIRMAR PRESENÇA</button>
-        <p class="nao-ir" onclick="confirmar(false)">Não poderei ir</p>
+        <p class="nao-ir" onclick="confirmar(false)">Vou ficar em terra firme</p>
     </div>
 
     <script>
@@ -197,97 +225,74 @@
 
         function iniciar() {
             const wrapper = document.getElementById('envelopeWrapper');
-            const env = document.getElementById('envelopeAnim');
             const card = document.getElementById('convite');
             const som = document.getElementById('musica');
             const luz = document.getElementById('luzBatida');
 
-            // Ativa a luz
             luz.style.opacity = "1";
 
-            // Tenta tocar a música
             som.play().then(() => {
                 setupVisualizer(som);
-            }).catch(e => console.log("Erro ao tocar:", e));
+            }).catch(e => console.log("Áudio aguardando interação"));
 
-            env.classList.add('open');
-
+            wrapper.classList.add('fade-out');
+            
             setTimeout(() => {
-                wrapper.classList.add('fade-out');
-                setTimeout(() => {
-                    wrapper.style.display = 'none';
-                    card.style.display = 'flex';
-                    chuvaDeEstrelas();
-                }, 600);
-            }, 800);
+                wrapper.style.display = 'none';
+                card.style.display = 'flex';
+                chuvaDeOuro();
+            }, 600);
         }
 
-        // Função para configurar o analisador de áudio
         function setupVisualizer(audioElement) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             source = audioContext.createMediaElementSource(audioElement);
             analyser = audioContext.createAnalyser();
-
             source.connect(analyser);
             analyser.connect(audioContext.destination);
-
-            analyser.fftSize = 64; // Tamanho pequeno para focar nos graves
-            const bufferLength = analyser.frequencyBinCount;
-            dataArray = new Uint8Array(bufferLength);
-
+            analyser.fftSize = 64;
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
             animarLuz();
         }
 
         function animarLuz() {
             const luz = document.getElementById('luzBatida');
-            
             function loop() {
                 analyser.getByteFrequencyData(dataArray);
-
-                // Pega a média das frequências baixas (batida/grave)
                 let sum = 0;
-                for(let i = 0; i < 5; i++) {
-                    sum += dataArray[i];
-                }
+                for(let i = 0; i < 5; i++) sum += dataArray[i];
                 let average = sum / 5;
-
-                // Transforma o volume em escala (pulsação)
-                // O valor 1.5 controla o tamanho máximo da luz
                 let scale = 1 + (average / 150); 
-                let opacity = 0.2 + (average / 255);
-
                 luz.style.transform = `scale(${scale})`;
-                luz.style.opacity = opacity;
-
+                luz.style.opacity = 0.1 + (average / 255);
                 requestAnimationFrame(loop);
             }
             loop();
         }
 
-        function chuvaDeEstrelas() {
+        function chuvaDeOuro() {
             const sky = document.getElementById('sky');
-            const cores = ['#6a00ff', '#9c00ff', '#c400ff', '#ffffff'];
+            const itens = ['💰', '🪙', '☠️', '⚓'];
             setInterval(() => {
                 const s = document.createElement('div');
-                s.className = 'star';
-                s.innerHTML = "✦";
+                s.className = 'coin';
+                s.innerHTML = itens[Math.floor(Math.random() * itens.length)];
                 s.style.left = Math.random() * 100 + "vw";
-                s.style.top = "-20px";
-                s.style.color = cores[Math.floor(Math.random() * cores.length)];
-                s.style.fontSize = (Math.random() * 12 + 8) + "px";
+                s.style.top = "-50px";
+                s.style.fontSize = (Math.random() * 20 + 15) + "px";
                 s.style.animationDuration = (Math.random() * 3 + 2) + "s";
                 sky.appendChild(s);
                 setTimeout(() => s.remove(), 4000);
-            }, 150);
+            }, 300);
         }
 
         function confirmar(vai) {
             const nome = document.getElementById("nomeConvidado").value;
-            if(!nome){ alert("Por favor, digite seu nome primeiro."); return; }
+            if(!nome){ alert("Identifique-se, marujo!"); return; }
             const numero = "558189659847";
             const mensagem = vai ? 
-                `Confirmado! ✅ ${nome} estará presente na festa de 17 anos da Thaís Vitória!` : 
-                `Aviso: ${nome} infelizmente não poderá comparecer.`;
+                `Ahoy! 🏴‍☠️ ${nome} confirmou presença na Capital Gancho para os 17 anos da Thaís!` : 
+                `Lamentável! ${nome} não poderá embarcar nessa aventura.`;
             window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`, "_blank");
         }
     </script>
