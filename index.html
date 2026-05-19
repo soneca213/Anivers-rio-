@@ -3,298 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>17 Anos - Thaís (Missão Pirata)</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Montserrat:wght@400;700&family=Special+Elite&display=swap" rel="stylesheet">
-    
+    <title>VetLingo Expert</title>
     <style>
         :root {
-            --gold: #d4af37;
-            --wood: #3e2723;
-            --blood: #8b0000;
-            --parchment: #f4e4bc;
+            --green: #58cc02;
+            --dark-green: #46a302;
+            --red: #ff4b4b;
+            --blue: #1cb0f6;
+            --gray: #e5e5e5;
+            --text: #4b4b4b;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            min-height: 100vh;
-            background: radial-gradient(circle at center, #2c1e14, #000000);
-            font-family: 'Special Elite', system-ui;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* --- EFEITO DE CANHÃO (FLASH) --- */
-        .luz-batida {
-            position: fixed;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, rgba(0,0,0,0) 70%);
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0;
-        }
-
-        /* CONTAINER BAÚ */
-        .wrapper-total {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fff;
+            color: var(--text);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 30px;
-            z-index: 10;
-            transition: all 0.6s ease;
-            cursor: pointer;
+            margin: 0; padding: 20px;
         }
 
-        .wrapper-total.fade-out {
-            opacity: 0;
-            transform: scale(0.8);
-            pointer-events: none;
+        .header { width: 100%; max-width: 600px; display: flex; align-items: center; gap: 15px; margin-bottom: 40px; }
+        .progress-bar { flex-grow: 1; height: 16px; background-color: var(--gray); border-radius: 10px; }
+        #progress { width: 0%; height: 100%; background-color: var(--green); border-radius: 10px; transition: 0.5s; }
+
+        .card { width: 100%; max-width: 500px; }
+        h2 { font-size: 22px; text-align: center; margin-bottom: 25px; }
+
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn {
+            padding: 15px; border: 2px solid var(--gray); border-bottom: 4px solid var(--gray);
+            border-radius: 15px; background: white; cursor: pointer; font-size: 16px;
+            font-weight: bold; transition: 0.1s; text-align: left;
         }
+        .option-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
 
-        .envelope {
-            position: relative;
-            width: 280px;
-            height: 180px;
-            background-color: var(--wood);
-            border: 4px solid #2a1b0a;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        /* Estilos de Feedback */
+        .correct { background-color: #d7ffb8 !important; border-color: var(--green) !important; color: var(--dark-green) !important; }
+        .wrong { background-color: #ffdfe0 !important; border-color: var(--red) !important; color: var(--red) !important; }
+
+        .explanation-box {
+            margin-top: 20px; padding: 15px; border-radius: 15px; display: none;
+            font-size: 14px; line-height: 1.4; animation: slideUp 0.3s ease;
         }
+        .explanation-correct { background-color: #d7ffb8; border: 1px solid var(--green); }
+        .explanation-wrong { background-color: #ffdfe0; border: 1px solid var(--red); }
 
-        /* Lacre de Caveira */
-        .envelope::before {
-            content: "☠️";
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 3rem;
-            z-index: 5;
-            transition: 0.5s;
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .footer { position: fixed; bottom: 0; width: 100%; padding: 20px; border-top: 2px solid var(--gray); display: flex; justify-content: center; background: white; }
+        #next-btn {
+            width: 80%; max-width: 400px; padding: 15px; background-color: var(--green);
+            color: white; border: none; border-radius: 15px; border-bottom: 4px solid var(--dark-green);
+            font-size: 18px; font-weight: bold; cursor: pointer; display: none;
         }
-
-        .envelope.open::before { opacity: 0; }
-
-        .instrucao {
-            color: var(--gold);
-            font-weight: bold;
-            letter-spacing: 2px;
-            font-family: 'Pirata One', cursive;
-            font-size: 1.5rem;
-            text-align: center;
-            animation: piscar 1.5s infinite;
-        }
-
-        @keyframes piscar {
-            0%, 100% { opacity: 1; text-shadow: 0 0 10px var(--gold); }
-            50% { opacity: 0.4; }
-        }
-
-        /* PERGAMINHO DE CONVITE */
-        .card-luxo {
-            position: fixed;
-            display: none;
-            z-index: 20;
-            width: 90%;
-            max-width: 450px;
-            max-height: 85vh;
-            background: var(--parchment);
-            background-image: url('https://www.transparenttextures.com/patterns/paper.png');
-            border-radius: 5px;
-            padding: 40px 25px;
-            flex-direction: column;
-            gap: 15px;
-            text-align: center;
-            border: 10px solid #5d4037;
-            box-shadow: 0 0 50px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.1);
-            overflow-y: auto;
-            animation: desenrolar 1.2s ease-out forwards;
-        }
-
-        @keyframes desenrolar {
-            from { opacity: 0; transform: scaleY(0); }
-            to { opacity: 1; transform: scaleY(1); }
-        }
-
-        .idade { font-family: 'Pirata One', cursive; font-size: 2.5rem; color: var(--blood); margin-bottom: -10px; }
-        .nome {
-            font-family: 'Pirata One', cursive;
-            font-size: 4.5rem;
-            color: #1a1a1a;
-            text-transform: uppercase;
-            margin: 10px 0;
-            border-bottom: 2px dashed #5d4037;
-        }
-
-        .frase { font-style: italic; font-size: 0.9rem; color: #4e342e; margin-bottom: 10px; font-weight: bold; }
-        
-        .infos { 
-            font-size: 1rem; 
-            line-height: 1.6; 
-            color: #1a1a1a; 
-            background: rgba(0,0,0,0.05); 
-            padding: 15px; 
-            border: 1px solid #d7ccc8;
-        }
-        .infos b { color: var(--blood); font-size: 1.1rem; }
-
-        .obs {
-            font-size: 0.8rem;
-            color: #8b0000;
-            background: #ffecb3;
-            padding: 10px;
-            border-left: 5px solid var(--blood);
-            margin-top: 10px;
-            text-align: left;
-        }
-
-        input { 
-            padding: 12px; 
-            border: 2px solid #5d4037; 
-            background: rgba(255,255,255,0.5); 
-            text-align: center; 
-            font-family: 'Special Elite';
-            width: 80%; 
-            margin: 10px auto; 
-        }
-
-        button { 
-            padding: 15px; 
-            background: var(--blood); 
-            color: white; 
-            border: none; 
-            font-family: 'Pirata One';
-            font-size: 1.5rem;
-            cursor: pointer; 
-            transition: 0.3s; 
-            width: 80%; 
-            margin: 0 auto; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.4); 
-        }
-        button:hover { background: #5a0000; transform: translateY(-3px); }
-
-        .nao-ir { color: #5d4037; cursor: pointer; font-size: 0.8rem; text-decoration: underline; margin-top: 10px; }
-
-        #sky { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .coin { position: absolute; animation: fall linear infinite; }
-        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div class="luz-batida" id="luzBatida"></div>
-
-    <audio id="musica" loop crossorigin="anonymous">
-        <source src="AUD-20260223-WA0003.mp3" type="audio/mpeg">
-    </audio>
-
-    <div id="sky"></div>
-
-    <div class="wrapper-total" id="envelopeWrapper" onclick="iniciar()">
-        <div class="envelope" id="envelopeAnim"></div>
-        <div class="instrucao">ABRIR MAPA DO TESOURO</div>
+    <div class="header">
+        <span style="font-size: 24px;">🐾</span>
+        <div class="progress-bar"><div id="progress"></div></div>
+        <span id="score" style="font-weight: bold;">0</span>
     </div>
 
-    <div class="card-luxo" id="convite">
-        <p class="idade">A TRIPULAÇÃO DOS 17 ANOS</p>
-        <h1 class="nome">Thaís</h1>
-        <p class="frase">"Nem todo tesouro é prata e ouro, mas minha festa será preciosa com você!"</p>
-        
-        <div class="infos">
-            📅 <b> 14 DE MARÇO DE 2026</b><br>
-            ⏰ <b>A PARTIR DAS 14:00 HORAS</b><br>
-            📍 <b>LOCAL: CAPITAL GANCHO</b>
-        </div>
+    <div class="card">
+        <h2 id="question"></h2>
+        <div class="options" id="options-container"></div>
+        <div id="explanation" class="explanation-box"></div>
+    </div>
 
-        <div class="obs">
-            <strong>⚠️ AVISO AOS MARUJOS:</strong><br>
-            É necessário levar dobrões (dinheiro) para o transporte e alimentação no local.
-        </div>
-
-        <input type="text" id="nomeConvidado" placeholder="Nome do Marujo">
-        <button onclick="confirmar(true)">CONFIRMAR PRESENÇA</button>
-        <p class="nao-ir" onclick="confirmar(false)">Vou ficar em terra firme</p>
+    <div class="footer">
+        <button id="next-btn" onclick="nextQuestion()">VERIFICAR</button>
     </div>
 
     <script>
-        let audioContext, analyser, dataArray, source;
-
-        function iniciar() {
-            const wrapper = document.getElementById('envelopeWrapper');
-            const card = document.getElementById('convite');
-            const som = document.getElementById('musica');
-            const luz = document.getElementById('luzBatida');
-
-            luz.style.opacity = "1";
-
-            som.play().then(() => {
-                setupVisualizer(som);
-            }).catch(e => console.log("Áudio aguardando interação"));
-
-            wrapper.classList.add('fade-out');
-            
-            setTimeout(() => {
-                wrapper.style.display = 'none';
-                card.style.display = 'flex';
-                chuvaDeOuro();
-            }, 600);
-        }
-
-        function setupVisualizer(audioElement) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            source = audioContext.createMediaElementSource(audioElement);
-            analyser = audioContext.createAnalyser();
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
-            analyser.fftSize = 64;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            animarLuz();
-        }
-
-        function animarLuz() {
-            const luz = document.getElementById('luzBatida');
-            function loop() {
-                analyser.getByteFrequencyData(dataArray);
-                let sum = 0;
-                for(let i = 0; i < 5; i++) sum += dataArray[i];
-                let average = sum / 5;
-                let scale = 1 + (average / 150); 
-                luz.style.transform = `scale(${scale})`;
-                luz.style.opacity = 0.1 + (average / 255);
-                requestAnimationFrame(loop);
+        const questions = [
+            {
+                q: "Por que não podemos aplicar vacinas em qualquer lugar do corpo de um gato?",
+                options: [
+                    "Porque o gato sente mais dor nas costas.",
+                    "Para evitar o sarcoma (um tipo de tumor no local da aplicação).",
+                    "Porque a vacina só funciona se for na pata.",
+                    "Porque o pelo não cresce mais onde vacina."
+                ],
+                correct: 1,
+                why: "Gatos têm uma sensibilidade especial! Aplicar mais abaixo nas patas ajuda a monitorar e prevenir o sarcoma vacinal."
+            },
+            {
+                q: "Qual a função principal dos ossos?",
+                options: [
+                    "Apenas para guardar cálcio.",
+                    "Fazer o sangue circular mais rápido.",
+                    "Sustentação e proteção de órgãos vitais.",
+                    "Transformar comida em energia."
+                ],
+                correct: 2,
+                why: "Os ossos são as vigas do prédio! Eles seguram o corpo em pé e protegem o 'tesouro' (coração e pulmões)."
+            },
+            {
+                q: "O que acontece na Diástole do coração?",
+                options: [
+                    "O coração para de bater por 2 segundos.",
+                    "O coração aperta para o sangue sair.",
+                    "O coração relaxa para se encher de sangue.",
+                    "O sangue troca de cor dentro do ventrículo."
+                ],
+                correct: 2,
+                why: "Pense em 'D' de Descanso. Na Diástole o coração relaxa para receber o sangue que vai ser bombeado depois."
             }
-            loop();
+        ];
+
+        let currentIdx = 0;
+        let score = parseInt(localStorage.getItem('vetScore')) || 0;
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(freq) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
         }
 
-        function chuvaDeOuro() {
-            const sky = document.getElementById('sky');
-            const itens = ['💰', '🪙', '☠️', '⚓'];
-            setInterval(() => {
-                const s = document.createElement('div');
-                s.className = 'coin';
-                s.innerHTML = itens[Math.floor(Math.random() * itens.length)];
-                s.style.left = Math.random() * 100 + "vw";
-                s.style.top = "-50px";
-                s.style.fontSize = (Math.random() * 20 + 15) + "px";
-                s.style.animationDuration = (Math.random() * 3 + 2) + "s";
-                sky.appendChild(s);
-                setTimeout(() => s.remove(), 4000);
-            }, 300);
+        function loadQuestion() {
+            const q = questions[currentIdx];
+            document.getElementById('question').innerText = q.q;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            const expBox = document.getElementById('explanation');
+            expBox.style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+            document.getElementById('score').innerText = score;
+
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(i, btn);
+                container.appendChild(btn);
+            });
+            updateProgress();
         }
 
-        function confirmar(vai) {
-            const nome = document.getElementById("nomeConvidado").value;
-            if(!nome){ alert("Identifique-se, marujo!"); return; }
-            const numero = "558189659847";
-            const mensagem = vai ? 
-                `Ahoy! 🏴‍☠️ ${nome} confirmou presença na Capital Gancho para os 17 anos da Thaís!` : 
-                `Lamentável! ${nome} não poderá embarcar nessa aventura.`;
-            window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`, "_blank");
+        function checkAnswer(selected, btn) {
+            const q = questions[currentIdx];
+            const allBtns = document.querySelectorAll('.option-btn');
+            const expBox = document.getElementById('explanation');
+            
+            allBtns.forEach(b => b.disabled = true);
+            expBox.style.display = 'block';
+
+            if (selected === q.correct) {
+                btn.classList.add('correct');
+                expBox.className = 'explanation-box explanation-correct';
+                expBox.innerHTML = `<b>Acertou! ✨</b><br>${q.why}`;
+                playSound(880);
+                score += 10;
+                localStorage.setItem('vetScore', score);
+            } else {
+                btn.classList.add('wrong');
+                allBtns[q.correct].classList.add('correct');
+                expBox.className = 'explanation-box explanation-wrong';
+                expBox.innerHTML = `<b>Ops! O certo era:</b> ${q.options[q.correct]}<br><br><b>Por que?</b> ${q.why}`;
+                playSound(220);
+            }
+            document.getElementById('next-btn').style.display = 'block';
+            document.getElementById('next-btn').innerText = "PRÓXIMA";
         }
+
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx >= questions.length) {
+                currentIdx = 0;
+                alert("Ciclo concluído! Você está ficando fera!");
+            }
+            loadQuestion();
+        }
+
+        function updateProgress() {
+            const percent = (currentIdx / questions.length) * 100;
+            document.getElementById('progress').style.width = percent + '%';
+        }
+
+        loadQuestion();
     </script>
 </body>
 </html>
