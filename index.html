@@ -1,174 +1,497 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetLingo - O Desafio Final</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --blue: #1cb0f6; --dark-blue: #1689bd; --yellow: #ffc800;
-            --dark-yellow: #e5b400; --green: #58cc02; --red: #ff4b4b;
-            --gray: #e5e5e5; --text: #3c3c3c;
-        }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; justify-content: center; padding: 20px; color: var(--text); }
-        .container { width: 100%; max-width: 650px; background: white; border-radius: 24px; padding: 30px; box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
-        
-        .screen { display: none; animation: slideUp 0.4s ease-out; }
-        .active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Estilo dos Cards de Resumo */
-        .lesson-card { background: #f0f9ff; border-radius: 18px; padding: 20px; margin-bottom: 25px; border-left: 10px solid var(--blue); }
-        .lesson-card h3 { margin: 0 0 15px 0; color: var(--dark-blue); font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        .lesson-card p { font-size: 15px; line-height: 1.6; margin-bottom: 10px; }
-        .highlight { color: var(--dark-blue); font-weight: bold; background: #fff5cc; padding: 2px 5px; border-radius: 5px; }
+<title>VetLingo - Super Revisão</title>
 
-        /* Quiz e Progresso */
-        .progress-bar { width: 100%; height: 16px; background: var(--gray); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        #progress-fill { height: 100%; background: var(--blue); width: 0%; transition: 0.5s; }
-        
-        .option-btn {
-            width: 100%; padding: 18px; margin: 12px 0; border: 2px solid var(--gray);
-            border-bottom: 6px solid var(--gray); border-radius: 20px; background: white;
-            cursor: pointer; font-weight: bold; font-size: 16px; text-align: left;
-        }
-        .option-btn:active { transform: translateY(3px); border-bottom-width: 3px; }
-        
-        .correct { background: #d7ffb8 !important; border-color: var(--green) !important; color: #46a302 !important; border-bottom-color: #46a302 !important; }
-        .wrong { background: #ffdfe0 !important; border-color: var(--red) !important; color: var(--red) !important; border-bottom-color: #c43a3a !important; }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        .explanation-box { margin-top: 20px; padding: 20px; border-radius: 18px; display: none; font-size: 15px; border: 2px solid #ddd; background: #fff; line-height: 1.5; }
-        
-        .main-btn { 
-            width: 100%; padding: 22px; background: var(--yellow); color: #4b4b4b; border: none; 
-            border-radius: 20px; font-weight: 900; font-size: 19px; cursor: pointer; 
-            border-bottom: 6px solid var(--dark-yellow); text-transform: uppercase;
-        }
-    </style>
+<style>
+:root{
+    --blue:#1cb0f6;
+    --blue-dark:#1689bd;
+    --yellow:#ffc800;
+    --yellow-dark:#e0b000;
+    --green:#58cc02;
+    --red:#ff4b4b;
+    --bg:#f5f7fb;
+    --white:#ffffff;
+    --text:#3c3c3c;
+    --gray:#dcdcdc;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#eef5ff,#f7fbff);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    padding:20px;
+    color:var(--text);
+}
+
+.container{
+    width:100%;
+    max-width:700px;
+    background:var(--white);
+    border-radius:30px;
+    padding:30px;
+    box-shadow:0 15px 40px rgba(0,0,0,.1);
+    animation:fade .5s ease;
+}
+
+@keyframes fade{
+    from{
+        opacity:0;
+        transform:translateY(15px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.screen{
+    display:none;
+}
+
+.active{
+    display:block;
+}
+
+.title{
+    text-align:center;
+    color:var(--blue);
+    margin-bottom:25px;
+    font-size:2rem;
+}
+
+.lesson-card{
+    background:#f7fbff;
+    border-left:8px solid var(--blue);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:20px;
+    transition:.3s;
+}
+
+.lesson-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+}
+
+.lesson-card h3{
+    margin-bottom:12px;
+    color:var(--blue-dark);
+}
+
+.lesson-card p{
+    line-height:1.6;
+    font-size:15px;
+}
+
+.progress-container{
+    width:100%;
+    height:18px;
+    background:#ececec;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:25px;
+}
+
+.progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--blue),#54d2ff);
+    transition:.4s;
+}
+
+.question{
+    margin-bottom:25px;
+    font-size:1.5rem;
+}
+
+.option-btn{
+    width:100%;
+    padding:18px;
+    margin:10px 0;
+    border:none;
+    border-radius:18px;
+    background:#fff;
+    border:2px solid var(--gray);
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+    text-align:left;
+    transition:.25s;
+}
+
+.option-btn:hover{
+    transform:scale(1.02);
+    background:#f8fcff;
+}
+
+.correct{
+    background:#dfffc7 !important;
+    border-color:var(--green) !important;
+    color:#2d8600;
+}
+
+.wrong{
+    background:#ffdede !important;
+    border-color:var(--red) !important;
+    color:#c10000;
+}
+
+.explanation{
+    margin-top:20px;
+    padding:18px;
+    border-radius:18px;
+    background:#f8f8f8;
+    display:none;
+    line-height:1.5;
+    border:2px solid #ececec;
+}
+
+.main-btn{
+    width:100%;
+    padding:20px;
+    border:none;
+    border-radius:20px;
+    background:var(--yellow);
+    color:#333;
+    font-size:18px;
+    font-weight:900;
+    cursor:pointer;
+    margin-top:20px;
+    transition:.2s;
+    box-shadow:0 6px 0 var(--yellow-dark);
+}
+
+.main-btn:hover{
+    transform:translateY(-2px);
+}
+
+.main-btn:active{
+    transform:translateY(4px);
+    box-shadow:0 2px 0 var(--yellow-dark);
+}
+
+.result-box{
+    text-align:center;
+}
+
+.result-text{
+    margin-top:20px;
+    font-size:1.2rem;
+    font-weight:bold;
+}
+
+.score{
+    font-size:2rem;
+    color:var(--blue);
+    margin:15px 0;
+}
+
+@media(max-width:600px){
+
+    .container{
+        padding:20px;
+    }
+
+    .title{
+        font-size:1.6rem;
+    }
+
+    .question{
+        font-size:1.2rem;
+    }
+
+    .option-btn{
+        font-size:15px;
+    }
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    
-    <div id="screen-intro" class="screen active">
-        <h1 style="text-align:center; color: var(--blue)">📖 Super Revisão Veterinária</h1>
-        
-        <div class="lesson-card">
-            <h3>🦴 Osso e Coração</h3>
-            <p>Os <b>ossos</b> são fundamentais para a <b>sustentação</b> e <b>proteção</b> de órgãos como o cérebro. Dentro deles, a medula produz células do sangue. No coração, o ciclo nunca para: a <b>Sístole</b> é o momento de <b>contração</b> (sangue sai para o corpo) e a <b>Diástole</b> é o momento de <b>relaxamento</b> (coração se enche).</p>
-        </div>
 
-        <div class="lesson-card">
-            <h3>🩹 Pele e Cicatrização</h3>
-            <p>A pele tem três camadas: <b>Epiderme</b> (proteção externa), <b>Derme</b> (onde estão os vasos e nervos) e <b>Hipoderme</b> (camada de <b>gordura</b> profunda). Curativos mal feitos são perigosos: se estiverem <b>muito apertados</b>, impedem o sangue de passar, causando <b>necrose</b> (morte do tecido).</p>
-        </div>
+<!-- INTRO -->
+<div id="intro" class="screen active">
 
-        <div class="lesson-card">
-            <h3>💉 Saúde e Exames</h3>
-            <p>Gatos possuem risco de tumores no local da vacina, por isso vacinamos nos <b>membros (patas)</b>. Para exames de urina perfeitos, usamos a <b>Cistocentese</b> (agulha direta na bexiga). Lembre-se: toda amostra <b>precisa</b> ter <b>Nome, Data e Hora</b>, ou será descartada pelo laboratório.</p>
-        </div>
+<h1 class="title">📖 Super Revisão Veterinária</h1>
 
-        <button class="main-btn" onclick="startQuiz()">Li tudo! Ir para as perguntas</button>
-    </div>
+<div class="lesson-card">
+<h3>🦴 Osso e Coração</h3>
+<p>
+Os ossos fazem sustentação e proteção do corpo.
+A sístole é a contração do coração e a diástole é o relaxamento.
+</p>
+</div>
 
-    <div id="screen-quiz" class="screen">
-        <div class="progress-bar"><div id="progress-fill"></div></div>
-        <h2 id="q-text" style="margin-bottom: 25px;">Carregando...</h2>
-        <div id="options-box"></div>
-        <div id="exp-box" class="explanation-box"></div>
-        <button id="next-btn" class="main-btn" style="display:none; margin-top:25px" onclick="handleNext()">Próxima</button>
-    </div>
+<div class="lesson-card">
+<h3>🩹 Pele e Cicatrização</h3>
+<p>
+A hipoderme possui gordura.
+Curativos apertados podem causar necrose.
+</p>
+</div>
 
-    <div id="screen-result" class="screen" style="text-align:center">
-        <h2 style="color: var(--blue)">🎯 Seu Resultado Final</h2>
-        <div style="max-width: 300px; margin: 0 auto;"><canvas id="resultChart"></canvas></div>
-        <div id="diag-msg" style="margin: 25px 0; font-weight: bold; font-size: 18px;"></div>
-        <button class="main-btn" style="background: var(--blue); border-bottom-color: var(--dark-blue); color: white;" onclick="location.reload()">Estudar de Novo</button>
-    </div>
+<div class="lesson-card">
+<h3>💉 Saúde e Exames</h3>
+<p>
+A cistocentese é o melhor método para coleta de urina.
+Toda amostra precisa de nome, data e hora.
+</p>
+</div>
+
+<button class="main-btn" onclick="startQuiz()">
+Começar Quiz
+</button>
+
+</div>
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+
+<div class="progress-container">
+<div class="progress-fill" id="progress"></div>
+</div>
+
+<h2 class="question" id="question">
+Pergunta
+</h2>
+
+<div id="options"></div>
+
+<div class="explanation" id="explanation"></div>
+
+<button id="nextBtn" class="main-btn" style="display:none;">
+Próxima
+</button>
+
+</div>
+
+<!-- RESULTADO -->
+<div id="result" class="screen result-box">
+
+<h1 class="title">🏆 Resultado Final</h1>
+
+<div class="score" id="scoreText"></div>
+
+<canvas id="chart"></canvas>
+
+<div class="result-text" id="resultText"></div>
+
+<button class="main-btn" onclick="location.reload()">
+Refazer Quiz
+</button>
+
+</div>
 
 </div>
 
 <script>
-    const questions = [
-        // FÁCEIS
-        { q: "Qual a função principal dos ossos?", options: ["Sustentação e Proteção", "Apenas estética", "Digestão"], correct: 0, why: "Os ossos são as vigas do corpo e protegem órgãos vitais!" },
-        { q: "Qual camada da pele contém a gordura?", options: ["Epiderme", "Hipoderme", "Derme"], correct: 1, why: "A <b>Hipoderme</b> é o isolante térmico e reserva de gordura." },
-        // MÉDIAS
-        { q: "O que acontece na Sístole cardíaca?", options: ["O coração relaxa", "O coração contrai e expulsa o sangue", "O sangue para de correr"], correct: 1, why: "Sístole = Contração. O sangue é bombeado para as artérias." },
-        { q: "O que um curativo apertado demais pode causar?", options: ["Cura rápida", "Necrose e inchaço", "Nada"], correct: 1, why: "Sem sangue passando, o tecido morre (necrose)." },
-        // DIFÍCEIS
-        { q: "Por que vacinar gatos nos membros inferiores?", options: ["Para evitar Sarcoma", "Porque dói menos", "É mais rápido"], correct: 0, why: "Gatos podem desenvolver tumores vacinais; nas patas é mais fácil tratar ou remover." },
-        { q: "Qual o melhor método de coleta de urina para cultura?", options: ["Pote comum", "Sondagem", "Cistocentese"], correct: 2, why: "A <b>Cistocentese</b> (agulha na bexiga) garante que a amostra esteja livre de bactérias externas." },
-        { q: "Qual informação é OBRIGATÓRIA na amostra?", options: ["Cor do pelo", "Nome, Data e Hora", "Peso do bicho"], correct: 1, why: "Sem identificação, a amostra é inútil para o diagnóstico!" }
-    ];
 
-    let current = 0, hits = 0, misses = 0;
+const questions = [
 
-    function startQuiz() {
-        document.getElementById('screen-intro').classList.remove('active');
-        document.getElementById('screen-quiz').classList.add('active');
-        loadQ();
-    }
+{
+q:"Qual a função principal dos ossos?",
+options:["Sustentação e proteção","Digestão","Estética"],
+correct:0,
+why:"Os ossos sustentam o corpo e protegem órgãos."
+},
 
-    function loadQ() {
-        const q = questions[current];
-        document.getElementById('q-text').innerText = (current + 1) + ". " + q.q;
-        const box = document.getElementById('options-box');
-        box.innerHTML = '';
-        document.getElementById('exp-box').style.display = 'none';
-        document.getElementById('next-btn').style.display = 'none';
+{
+q:"Qual camada possui gordura?",
+options:["Epiderme","Hipoderme","Derme"],
+correct:1,
+why:"A hipoderme possui gordura."
+},
 
-        q.options.forEach((opt, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'option-btn';
-            btn.innerText = opt;
-            btn.onclick = () => check(i, btn);
-            box.appendChild(btn);
-        });
-        document.getElementById('progress-fill').style.width = (current / questions.length) * 100 + '%';
-    }
+{
+q:"O que acontece na sístole?",
+options:["Relaxamento","Contração do coração","Parada do sangue"],
+correct:1,
+why:"Na sístole o coração contrai."
+},
 
-    function check(idx, btn) {
-        const q = questions[current];
-        const all = document.querySelectorAll('.option-btn');
-        all.forEach(b => b.disabled = true);
-        const exp = document.getElementById('exp-box');
-        exp.style.display = 'block';
+{
+q:"Curativo apertado pode causar?",
+options:["Cura rápida","Necrose","Nada"],
+correct:1,
+why:"O excesso de pressão impede circulação."
+}
 
-        if(idx === q.correct) {
-            btn.classList.add('correct');
-            exp.innerHTML = "<b>Muito bem!</b><br>" + q.why;
-            hits++;
-        } else {
-            btn.classList.add('wrong');
-            all[q.correct].classList.add('correct');
-            exp.innerHTML = "<b>Atenção:</b><br>" + q.why;
-            misses++;
-        }
-        document.getElementById('next-btn').style.display = 'block';
-    }
+];
 
-    function handleNext() {
-        current++;
-        if(current < questions.length) loadQ();
-        else showFinal();
-    }
+let current = 0;
+let hits = 0;
 
-    function showFinal() {
-        document.getElementById('screen-quiz').classList.remove('active');
-        document.getElementById('screen-result').classList.add('active');
-        new Chart(document.getElementById('resultChart'), {
-            type: 'pie',
-            data: {
-                labels: ['Acertos', 'Erros'],
-                datasets: [{ data: [hits, misses], backgroundColor: ['#1cb0f6', '#ff4b4b'] }]
-            }
-        });
-        const msg = document.getElementById('diag-msg');
-        if(hits === questions.length) msg.innerHTML = "🏆 FERA DEMAIS!<br>Você domina todo o conteúdo!";
-        else msg.innerHTML = "📊 Bom trabalho!<br>Revise as questões vermelhas para gabaritar na próxima!";
-    }
+const question = document.getElementById("question");
+const options = document.getElementById("options");
+const explanation = document.getElementById("explanation");
+const progress = document.getElementById("progress");
+const nextBtn = document.getElementById("nextBtn");
+
+function startQuiz(){
+
+document.getElementById("intro").classList.remove("active");
+document.getElementById("quiz").classList.add("active");
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+const q = questions[current];
+
+question.innerHTML = `${current + 1}. ${q.q}`;
+
+options.innerHTML = "";
+
+explanation.style.display = "none";
+
+nextBtn.style.display = "none";
+
+progress.style.width =
+`${(current / questions.length) * 100}%`;
+
+q.options.forEach((opt,index)=>{
+
+const btn = document.createElement("button");
+
+btn.classList.add("option-btn");
+
+btn.innerHTML = opt;
+
+btn.onclick = ()=>checkAnswer(index,btn);
+
+options.appendChild(btn);
+
+});
+
+}
+
+function checkAnswer(index,btn){
+
+const q = questions[current];
+
+const allBtns =
+document.querySelectorAll(".option-btn");
+
+allBtns.forEach(b=>b.disabled = true);
+
+explanation.style.display = "block";
+
+if(index === q.correct){
+
+btn.classList.add("correct");
+
+hits++;
+
+explanation.innerHTML =
+`✅ <b>Correto!</b><br>${q.why}`;
+
+}else{
+
+btn.classList.add("wrong");
+
+allBtns[q.correct]
+.classList.add("correct");
+
+explanation.innerHTML =
+`❌ <b>Resposta errada.</b><br>${q.why}`;
+
+}
+
+nextBtn.style.display = "block";
+
+}
+
+nextBtn.onclick = ()=>{
+
+current++;
+
+if(current < questions.length){
+
+loadQuestion();
+
+}else{
+
+showResult();
+
+}
+
+};
+
+function showResult(){
+
+document.getElementById("quiz")
+.classList.remove("active");
+
+document.getElementById("result")
+.classList.add("active");
+
+const percent =
+Math.round((hits / questions.length) * 100);
+
+document.getElementById("scoreText")
+.innerHTML = `${percent}%`;
+
+const text =
+document.getElementById("resultText");
+
+if(percent === 100){
+
+text.innerHTML =
+"🏆 Você domina o conteúdo!";
+
+}else if(percent >= 70){
+
+text.innerHTML =
+"👏 Muito bom! Continue revisando.";
+
+}else{
+
+text.innerHTML =
+"📚 Você pode melhorar estudando mais.";
+
+}
+
+new Chart(document.getElementById("chart"),{
+
+type:"doughnut",
+
+data:{
+labels:["Acertos","Erros"],
+
+datasets:[{
+data:[hits,questions.length - hits],
+backgroundColor:[
+"#1cb0f6",
+"#ff4b4b"
+]
+}]
+}
+
+});
+
+}
+
 </script>
+
 </body>
 </html>
