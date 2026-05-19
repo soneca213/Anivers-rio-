@@ -3,193 +3,190 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetLingo Expert</title>
+    <title>VetLingo - Estudo Completo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --green: #58cc02;
-            --dark-green: #46a302;
-            --red: #ff4b4b;
-            --blue: #1cb0f6;
-            --gray: #e5e5e5;
-            --text: #4b4b4b;
+            --blue: #1cb0f6; --dark-blue: #1689bd; --yellow: #ffc800;
+            --dark-yellow: #e5b400; --green: #58cc02; --red: #ff4b4b;
+            --gray: #e5e5e5; --text: #3c3c3c;
         }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #fff;
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0; padding: 20px;
-        }
-
-        .header { width: 100%; max-width: 600px; display: flex; align-items: center; gap: 15px; margin-bottom: 40px; }
-        .progress-bar { flex-grow: 1; height: 16px; background-color: var(--gray); border-radius: 10px; }
-        #progress { width: 0%; height: 100%; background-color: var(--green); border-radius: 10px; transition: 0.5s; }
-
-        .card { width: 100%; max-width: 500px; }
-        h2 { font-size: 22px; text-align: center; margin-bottom: 25px; }
-
-        .options { display: flex; flex-direction: column; gap: 10px; }
-        .option-btn {
-            padding: 15px; border: 2px solid var(--gray); border-bottom: 4px solid var(--gray);
-            border-radius: 15px; background: white; cursor: pointer; font-size: 16px;
-            font-weight: bold; transition: 0.1s; text-align: left;
-        }
-        .option-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
-
-        /* Estilos de Feedback */
-        .correct { background-color: #d7ffb8 !important; border-color: var(--green) !important; color: var(--dark-green) !important; }
-        .wrong { background-color: #ffdfe0 !important; border-color: var(--red) !important; color: var(--red) !important; }
-
-        .explanation-box {
-            margin-top: 20px; padding: 15px; border-radius: 15px; display: none;
-            font-size: 14px; line-height: 1.4; animation: slideUp 0.3s ease;
-        }
-        .explanation-correct { background-color: #d7ffb8; border: 1px solid var(--green); }
-        .explanation-wrong { background-color: #ffdfe0; border: 1px solid var(--red); }
-
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; justify-content: center; padding: 20px; color: var(--text); }
+        .container { width: 100%; max-width: 600px; background: white; border-radius: 24px; padding: 30px; box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        
+        .screen { display: none; animation: slideUp 0.4s ease-out; }
+        .active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .footer { position: fixed; bottom: 0; width: 100%; padding: 20px; border-top: 2px solid var(--gray); display: flex; justify-content: center; background: white; }
-        #next-btn {
-            width: 80%; max-width: 400px; padding: 15px; background-color: var(--green);
-            color: white; border: none; border-radius: 15px; border-bottom: 4px solid var(--dark-green);
-            font-size: 18px; font-weight: bold; cursor: pointer; display: none;
+        /* Estilo das Explicações Detalhadas */
+        .lesson-group { margin-bottom: 30px; }
+        .lesson-card { background: #f0f9ff; border-radius: 15px; padding: 20px; margin-bottom: 15px; border-left: 8px solid var(--blue); }
+        .lesson-card h3 { margin: 0 0 10px 0; color: var(--dark-blue); font-size: 18px; }
+        .lesson-card ul { margin: 0; padding-left: 20px; }
+        .lesson-card li { margin-bottom: 8px; font-size: 14px; line-height: 1.4; }
+        .highlight { color: var(--dark-blue); font-weight: bold; background: #fff5cc; padding: 2px 4px; border-radius: 4px; }
+
+        /* Quiz */
+        .progress-bar { width: 100%; height: 14px; background: var(--gray); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+        #progress-fill { height: 100%; background: var(--blue); width: 0%; transition: 0.4s; }
+        .option-btn {
+            width: 100%; padding: 18px; margin: 10px 0; border: 2px solid var(--gray);
+            border-bottom: 5px solid var(--gray); border-radius: 18px; background: white;
+            cursor: pointer; font-weight: bold; font-size: 16px; text-align: left;
+        }
+        .correct { background: #d7ffb8 !important; border-color: var(--green) !important; color: #46a302 !important; border-bottom-color: #46a302 !important; }
+        .wrong { background: #ffdfe0 !important; border-color: var(--red) !important; color: var(--red) !important; border-bottom-color: #c43a3a !important; }
+
+        .explanation-box { margin-top: 20px; padding: 15px; border-radius: 15px; display: none; font-size: 15px; border: 2px dashed #ccc; background: #fff; }
+        
+        .main-btn { 
+            width: 100%; padding: 20px; background: var(--yellow); color: #4b4b4b; border: none; 
+            border-radius: 18px; font-weight: 900; font-size: 18px; cursor: pointer; 
+            border-bottom: 5px solid var(--dark-yellow); text-transform: uppercase;
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <span style="font-size: 24px;">🐾</span>
-        <div class="progress-bar"><div id="progress"></div></div>
-        <span id="score" style="font-weight: bold;">0</span>
+<div class="container">
+    
+    <div id="screen-intro" class="screen active">
+        <h1 style="text-align:center; color: var(--blue)">📖 Revisão Completa</h1>
+        
+        <div class="lesson-group">
+            <div class="lesson-card">
+                <h3>🦴 Bloco 1: O Corpo (Fotos 27244/45)</h3>
+                <ul>
+                    <li><b>Ossos:</b> Servem para <span class="highlight">Sustentação, Proteção e Reserva de Cálcio</span>.</li>
+                    <li><b>Coração:</b> Tem 4 câmaras. <span class="highlight">Sístole</span> (contrai/sai sangue) e <span class="highlight">Diástole</span> (relaxa/entra sangue).</li>
+                    <li><b>Gestação:</b> Cães e gatos levam de <span class="highlight">60 a 63 dias</span> (2 meses).</li>
+                </ul>
+            </div>
+
+            <div class="lesson-card">
+                <h3>🩹 Bloco 2: Pele e Curativos (Foto 27246)</h3>
+                <ul>
+                    <li><b>Camadas:</b> Epiderme (fora), Derme (meio) e Hipoderme (gordura).</li>
+                    <li><b>Curativos:</b> Protegem e ajudam a cicatrizar. Se apertar muito, causa <span class="highlight">Necrose</span> (morte do tecido).</li>
+                    <li><b>Colar Elisabetano:</b> Impede o animal de lamber e infectar a ferida.</li>
+                </ul>
+            </div>
+
+            <div class="lesson-card">
+                <h3>💉 Bloco 3: Vacinas e Vermes (Foto 27247)</h3>
+                <ul>
+                    <li><b>Vacina:</b> Treina o sistema imune com agentes mortos ou fracos.</li>
+                    <li><b>Gatos:</b> Vacinar nas <span class="highlight">patas</span> para evitar o Sarcoma (tumor no local da picada).</li>
+                    <li><b>Vermífugos:</b> Combatem parasitas que roubam energia do animal.</li>
+                </ul>
+            </div>
+
+            <div class="lesson-card">
+                <h3>🧪 Bloco 4: Exames e Amostras (Fotos 27248/49)</h3>
+                <ul>
+                    <li><b>Cistocentese:</b> Coleta de urina com agulha direto na bexiga (a mais limpa).</li>
+                    <li><b>Identificação:</b> Amostra sem <span class="highlight">Nome, Data e Hora</span> é descartada!</li>
+                    <li><b>Veias:</b> Jugular (pescoço), Cefálica (pata frente) e Safena (pata trás).</li>
+                </ul>
+            </div>
+        </div>
+
+        <button class="main-btn" onclick="startQuiz()">Tudo lido! Começar Desafio</button>
     </div>
 
-    <div class="card">
-        <h2 id="question"></h2>
-        <div class="options" id="options-container"></div>
-        <div id="explanation" class="explanation-box"></div>
+    <div id="screen-quiz" class="screen">
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+        <h2 id="q-text">Carregando...</h2>
+        <div id="options-box"></div>
+        <div id="exp-box" class="explanation-box"></div>
+        <button id="next-btn" class="main-btn" style="display:none; margin-top:20px" onclick="handleNext()">Continuar</button>
     </div>
 
-    <div class="footer">
-        <button id="next-btn" onclick="nextQuestion()">VERIFICAR</button>
+    <div id="screen-result" class="screen" style="text-align:center">
+        <h2 style="color: var(--blue)">📊 Seu Diagnóstico</h2>
+        <div style="max-width: 280px; margin: 0 auto;"><canvas id="resultChart"></canvas></div>
+        <div id="diag-msg" style="margin: 20px 0; font-weight: bold; font-size: 18px;"></div>
+        <button class="main-btn" style="background: var(--blue); border-color: var(--dark-blue); color: white;" onclick="location.reload()">Refazer Estudo</button>
     </div>
 
-    <script>
-        const questions = [
-            {
-                q: "Por que não podemos aplicar vacinas em qualquer lugar do corpo de um gato?",
-                options: [
-                    "Porque o gato sente mais dor nas costas.",
-                    "Para evitar o sarcoma (um tipo de tumor no local da aplicação).",
-                    "Porque a vacina só funciona se for na pata.",
-                    "Porque o pelo não cresce mais onde vacina."
-                ],
-                correct: 1,
-                why: "Gatos têm uma sensibilidade especial! Aplicar mais abaixo nas patas ajuda a monitorar e prevenir o sarcoma vacinal."
-            },
-            {
-                q: "Qual a função principal dos ossos?",
-                options: [
-                    "Apenas para guardar cálcio.",
-                    "Fazer o sangue circular mais rápido.",
-                    "Sustentação e proteção de órgãos vitais.",
-                    "Transformar comida em energia."
-                ],
-                correct: 2,
-                why: "Os ossos são as vigas do prédio! Eles seguram o corpo em pé e protegem o 'tesouro' (coração e pulmões)."
-            },
-            {
-                q: "O que acontece na Diástole do coração?",
-                options: [
-                    "O coração para de bater por 2 segundos.",
-                    "O coração aperta para o sangue sair.",
-                    "O coração relaxa para se encher de sangue.",
-                    "O sangue troca de cor dentro do ventrículo."
-                ],
-                correct: 2,
-                why: "Pense em 'D' de Descanso. Na Diástole o coração relaxa para receber o sangue que vai ser bombeado depois."
+</div>
+
+<script>
+    const questions = [
+        { q: "Quais as funções dos ossos?", options: ["Sustentação e Proteção", "Digestão", "Apenas estética"], correct: 0, why: "Os ossos são as vigas de sustentação e os escudos dos órgãos vitais!" },
+        { q: "O que acontece na Diástole?", options: ["O coração contrai", "O coração relaxa e enche", "O sangue para"], correct: 1, why: "D de Descanso! Na diástole o coração se enche de sangue novo." },
+        { q: "Qual a sequência da pele de fora para dentro?", options: ["Derme, Hipo, Epi", "Epi, Derme, Hipoderme", "Pelo, Carne, Osso"], correct: 1, why: "Epiderme (fora), Derme (meio), Hipoderme (gordura no fundo)." },
+        { q: "O que acontece se o curativo estiver muito apertado?", options: ["Cicatriz rápido", "Necrose e Inchaço", "Não muda nada"], correct: 1, why: "O aperto corta o sangue e pode matar a pele (necrose)." },
+        { q: "Por que vacinar gatos nas patas?", options: ["Evitar Sarcoma Vacinal", "Absorve melhor", "É regra de beleza"], correct: 0, why: "Gatos podem ter tumores no local da vacina; na pata é mais fácil tratar." },
+        { q: "Qual coleta de urina é melhor para cultura?", options: ["No chão", "Pote comum", "Cistocentese"], correct: 2, why: "A agulha direto na bexiga pega a urina sem contaminação externa." },
+        { q: "Informação obrigatória na amostra:", options: ["Cor do bicho", "Nome, Data e Hora", "Nome do dono apenas"], correct: 1, why: "Sem identificação completa, o exame não tem validade laboratorial." }
+    ];
+
+    let current = 0, hits = 0, misses = 0;
+
+    function startQuiz() {
+        document.getElementById('screen-intro').classList.remove('active');
+        document.getElementById('screen-quiz').classList.add('active');
+        loadQ();
+    }
+
+    function loadQ() {
+        const q = questions[current];
+        document.getElementById('q-text').innerText = q.q;
+        const box = document.getElementById('options-box');
+        box.innerHTML = '';
+        document.getElementById('exp-box').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'none';
+
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt;
+            btn.onclick = () => check(i, btn);
+            box.appendChild(btn);
+        });
+        document.getElementById('progress-fill').style.width = (current / questions.length) * 100 + '%';
+    }
+
+    function check(idx, btn) {
+        const q = questions[current];
+        const all = document.querySelectorAll('.option-btn');
+        all.forEach(b => b.disabled = true);
+        const exp = document.getElementById('exp-box');
+        exp.style.display = 'block';
+
+        if(idx === q.correct) {
+            btn.classList.add('correct');
+            exp.innerHTML = "<b>Acertou!</b> " + q.why;
+            hits++;
+        } else {
+            btn.classList.add('wrong');
+            all[q.correct].classList.add('correct');
+            exp.innerHTML = "<b>Opa!</b> " + q.why;
+            misses++;
+        }
+        document.getElementById('next-btn').style.display = 'block';
+    }
+
+    function handleNext() {
+        current++;
+        if(current < questions.length) loadQ();
+        else showFinal();
+    }
+
+    function showFinal() {
+        document.getElementById('screen-quiz').classList.remove('active');
+        document.getElementById('screen-result').classList.add('active');
+        new Chart(document.getElementById('resultChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Saboreou!', 'Ainda esquecendo'],
+                datasets: [{ data: [hits, misses], backgroundColor: ['#1cb0f6', '#ff4b4b'] }]
             }
-        ];
-
-        let currentIdx = 0;
-        let score = parseInt(localStorage.getItem('vetScore')) || 0;
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playSound(freq) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-        }
-
-        function loadQuestion() {
-            const q = questions[currentIdx];
-            document.getElementById('question').innerText = q.q;
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-            
-            const expBox = document.getElementById('explanation');
-            expBox.style.display = 'none';
-            document.getElementById('next-btn').style.display = 'none';
-            document.getElementById('score').innerText = score;
-
-            q.options.forEach((opt, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(i, btn);
-                container.appendChild(btn);
-            });
-            updateProgress();
-        }
-
-        function checkAnswer(selected, btn) {
-            const q = questions[currentIdx];
-            const allBtns = document.querySelectorAll('.option-btn');
-            const expBox = document.getElementById('explanation');
-            
-            allBtns.forEach(b => b.disabled = true);
-            expBox.style.display = 'block';
-
-            if (selected === q.correct) {
-                btn.classList.add('correct');
-                expBox.className = 'explanation-box explanation-correct';
-                expBox.innerHTML = `<b>Acertou! ✨</b><br>${q.why}`;
-                playSound(880);
-                score += 10;
-                localStorage.setItem('vetScore', score);
-            } else {
-                btn.classList.add('wrong');
-                allBtns[q.correct].classList.add('correct');
-                expBox.className = 'explanation-box explanation-wrong';
-                expBox.innerHTML = `<b>Ops! O certo era:</b> ${q.options[q.correct]}<br><br><b>Por que?</b> ${q.why}`;
-                playSound(220);
-            }
-            document.getElementById('next-btn').style.display = 'block';
-            document.getElementById('next-btn').innerText = "PRÓXIMA";
-        }
-
-        function nextQuestion() {
-            currentIdx++;
-            if (currentIdx >= questions.length) {
-                currentIdx = 0;
-                alert("Ciclo concluído! Você está ficando fera!");
-            }
-            loadQuestion();
-        }
-
-        function updateProgress() {
-            const percent = (currentIdx / questions.length) * 100;
-            document.getElementById('progress').style.width = percent + '%';
-        }
-
-        loadQuestion();
-    </script>
+        });
+        const msg = document.getElementById('diag-msg');
+        msg.innerHTML = hits >= 5 ? "⭐ Parabéns! Você gravou bem as fotos!" : "📖 Recomendo ler as explicações azuis de novo.";
+    }
+</script>
 </body>
 </html>
