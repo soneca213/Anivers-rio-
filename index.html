@@ -3,47 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetLingo - Estudo Completo</title>
+    <title>VetLingo - Edição Azul e Amarelo</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --blue: #1cb0f6; --dark-blue: #1689bd; --yellow: #ffc800;
-            --dark-yellow: #e5b400; --green: #58cc02; --red: #ff4b4b;
-            --gray: #e5e5e5; --text: #3c3c3c;
+            --primary-blue: #1cb0f6; /* Azul Vibrante */
+            --dark-blue: #1689bd;
+            --accent-yellow: #ffc800; /* Amarelo Atenção */
+            --dark-yellow: #e5b400;
+            --green: #58cc02;
+            --red: #ff4b4b;
+            --gray: #e5e5e5;
+            --text: #3c3c3c;
         }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; display: flex; justify-content: center; padding: 20px; color: var(--text); }
-        .container { width: 100%; max-width: 600px; background: white; border-radius: 24px; padding: 30px; box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .container { width: 100%; max-width: 550px; background: white; border-radius: 24px; padding: 30px; box-shadow: 0 12px 24px rgba(0,0,0,0.1); border: 2px solid var(--gray); }
         
         .screen { display: none; animation: slideUp 0.4s ease-out; }
         .active { display: block; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Estilo das Explicações Detalhadas */
-        .lesson-group { margin-bottom: 30px; }
-        .lesson-card { background: #f0f9ff; border-radius: 15px; padding: 20px; margin-bottom: 15px; border-left: 8px solid var(--blue); }
-        .lesson-card h3 { margin: 0 0 10px 0; color: var(--dark-blue); font-size: 18px; }
-        .lesson-card ul { margin: 0; padding-left: 20px; }
-        .lesson-card li { margin-bottom: 8px; font-size: 14px; line-height: 1.4; }
+        /* Explicações */
+        .lesson-card { background: #eef9ff; border-radius: 15px; padding: 20px; margin-bottom: 20px; border-left: 8px solid var(--primary-blue); }
+        .lesson-card h3 { margin-top: 0; color: var(--dark-blue); display: flex; align-items: center; gap: 8px; }
         .highlight { color: var(--dark-blue); font-weight: bold; background: #fff5cc; padding: 2px 4px; border-radius: 4px; }
 
         /* Quiz */
-        .progress-bar { width: 100%; height: 14px; background: var(--gray); border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
-        #progress-fill { height: 100%; background: var(--blue); width: 0%; transition: 0.4s; }
+        .progress-bar { width: 100%; height: 14px; background: var(--gray); border-radius: 10px; margin: 20px 0; overflow: hidden; }
+        #progress-fill { height: 100%; background: var(--primary-blue); width: 0%; transition: 0.4s ease; }
+        
         .option-btn {
             width: 100%; padding: 18px; margin: 10px 0; border: 2px solid var(--gray);
             border-bottom: 5px solid var(--gray); border-radius: 18px; background: white;
-            cursor: pointer; font-weight: bold; font-size: 16px; text-align: left;
+            cursor: pointer; font-weight: bold; font-size: 16px; text-align: left; transition: 0.1s;
         }
+        .option-btn:hover { background: #fdfdfd; border-color: #bbb; }
+        .option-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+        
         .correct { background: #d7ffb8 !important; border-color: var(--green) !important; color: #46a302 !important; border-bottom-color: #46a302 !important; }
         .wrong { background: #ffdfe0 !important; border-color: var(--red) !important; color: var(--red) !important; border-bottom-color: #c43a3a !important; }
 
-        .explanation-box { margin-top: 20px; padding: 15px; border-radius: 15px; display: none; font-size: 15px; border: 2px dashed #ccc; background: #fff; }
+        .explanation-box { margin-top: 20px; padding: 15px; border-radius: 15px; display: none; font-size: 15px; border: 2px dashed #ccc; }
         
         .main-btn { 
-            width: 100%; padding: 20px; background: var(--yellow); color: #4b4b4b; border: none; 
+            width: 100%; padding: 20px; background: var(--accent-yellow); color: #4b4b4b; border: none; 
             border-radius: 18px; font-weight: 900; font-size: 18px; cursor: pointer; 
-            border-bottom: 5px solid var(--dark-yellow); text-transform: uppercase;
+            border-bottom: 5px solid var(--dark-yellow); text-transform: uppercase; letter-spacing: 1px;
         }
+        .main-btn:hover { background: #ffd01a; }
+        .main-btn:active { transform: translateY(3px); border-bottom-width: 2px; }
     </style>
 </head>
 <body>
@@ -51,75 +59,54 @@
 <div class="container">
     
     <div id="screen-intro" class="screen active">
-        <h1 style="text-align:center; color: var(--blue)">📖 Revisão Completa</h1>
+        <h1 style="text-align:center; color: var(--primary-blue)">📘 Guia de Estudos</h1>
         
-        <div class="lesson-group">
-            <div class="lesson-card">
-                <h3>🦴 Bloco 1: O Corpo (Fotos 27244/45)</h3>
-                <ul>
-                    <li><b>Ossos:</b> Servem para <span class="highlight">Sustentação, Proteção e Reserva de Cálcio</span>.</li>
-                    <li><b>Coração:</b> Tem 4 câmaras. <span class="highlight">Sístole</span> (contrai/sai sangue) e <span class="highlight">Diástole</span> (relaxa/entra sangue).</li>
-                    <li><b>Gestação:</b> Cães e gatos levam de <span class="highlight">60 a 63 dias</span> (2 meses).</li>
-                </ul>
-            </div>
-
-            <div class="lesson-card">
-                <h3>🩹 Bloco 2: Pele e Curativos (Foto 27246)</h3>
-                <ul>
-                    <li><b>Camadas:</b> Epiderme (fora), Derme (meio) e Hipoderme (gordura).</li>
-                    <li><b>Curativos:</b> Protegem e ajudam a cicatrizar. Se apertar muito, causa <span class="highlight">Necrose</span> (morte do tecido).</li>
-                    <li><b>Colar Elisabetano:</b> Impede o animal de lamber e infectar a ferida.</li>
-                </ul>
-            </div>
-
-            <div class="lesson-card">
-                <h3>💉 Bloco 3: Vacinas e Vermes (Foto 27247)</h3>
-                <ul>
-                    <li><b>Vacina:</b> Treina o sistema imune com agentes mortos ou fracos.</li>
-                    <li><b>Gatos:</b> Vacinar nas <span class="highlight">patas</span> para evitar o Sarcoma (tumor no local da picada).</li>
-                    <li><b>Vermífugos:</b> Combatem parasitas que roubam energia do animal.</li>
-                </ul>
-            </div>
-
-            <div class="lesson-card">
-                <h3>🧪 Bloco 4: Exames e Amostras (Fotos 27248/49)</h3>
-                <ul>
-                    <li><b>Cistocentese:</b> Coleta de urina com agulha direto na bexiga (a mais limpa).</li>
-                    <li><b>Identificação:</b> Amostra sem <span class="highlight">Nome, Data e Hora</span> é descartada!</li>
-                    <li><b>Veias:</b> Jugular (pescoço), Cefálica (pata frente) e Safena (pata trás).</li>
-                </ul>
-            </div>
+        <div class="lesson-card">
+            <h3>🦴 Blocos: Anatomia & Fisiologia</h3>
+            <p>Ossos servem para <span class="highlight">Sustentação e Proteção</span>. O coração tem 4 câmaras: 2 átrios e 2 ventrículos. <br>
+            • <b>Sístole:</b> Contração (sai sangue).<br>
+            • <b>Diástole:</b> Relaxamento (entra sangue).</p>
         </div>
 
-        <button class="main-btn" onclick="startQuiz()">Tudo lido! Começar Desafio</button>
+        <div class="lesson-card">
+            <h3>🩹 Blocos: Pele & Curativos</h3>
+            <p>A pele tem 3 camadas: <span class="highlight">Epiderme, Derme e Hipoderme</span>. Bandagens devem proteger sem apertar demais, para não causar <b>edema ou necrose</b>.</p>
+        </div>
+
+        <div class="lesson-card">
+            <h3>💉 Blocos: Vacinas & Coletas</h3>
+            <p>Gatos devem ser vacinados nos <b>membros</b> para evitar o Sarcoma. A coleta de urina mais limpa é a <span class="highlight">Cistocentese</span>. Amostras precisam sempre de <b>Nome, Data e Hora</b>.</p>
+        </div>
+
+        <button class="main-btn" onclick="startQuiz()">Começar Desafio</button>
     </div>
 
     <div id="screen-quiz" class="screen">
         <div class="progress-bar"><div id="progress-fill"></div></div>
-        <h2 id="q-text">Carregando...</h2>
+        <h2 id="q-text">Carregando pergunta...</h2>
         <div id="options-box"></div>
         <div id="exp-box" class="explanation-box"></div>
-        <button id="next-btn" class="main-btn" style="display:none; margin-top:20px" onclick="handleNext()">Continuar</button>
+        <button id="next-btn" class="main-btn" style="display:none; margin-top: 25px;" onclick="handleNext()">Continuar</button>
     </div>
 
     <div id="screen-result" class="screen" style="text-align:center">
-        <h2 style="color: var(--blue)">📊 Seu Diagnóstico</h2>
-        <div style="max-width: 280px; margin: 0 auto;"><canvas id="resultChart"></canvas></div>
-        <div id="diag-msg" style="margin: 20px 0; font-weight: bold; font-size: 18px;"></div>
-        <button class="main-btn" style="background: var(--blue); border-color: var(--dark-blue); color: white;" onclick="location.reload()">Refazer Estudo</button>
+        <h2 style="color: var(--primary-blue)">📈 Seu Diagnóstico Final</h2>
+        <div style="max-width: 280px; margin: 20px auto;">
+            <canvas id="resultChart"></canvas>
+        </div>
+        <div id="diag-msg" style="margin: 25px 0; font-size: 18px; font-weight: bold;"></div>
+        <button class="main-btn" style="background: var(--primary-blue); border-bottom-color: var(--dark-blue); color: white;" onclick="location.reload()">Refazer Estudo</button>
     </div>
 
 </div>
 
 <script>
     const questions = [
-        { q: "Quais as funções dos ossos?", options: ["Sustentação e Proteção", "Digestão", "Apenas estética"], correct: 0, why: "Os ossos são as vigas de sustentação e os escudos dos órgãos vitais!" },
-        { q: "O que acontece na Diástole?", options: ["O coração contrai", "O coração relaxa e enche", "O sangue para"], correct: 1, why: "D de Descanso! Na diástole o coração se enche de sangue novo." },
-        { q: "Qual a sequência da pele de fora para dentro?", options: ["Derme, Hipo, Epi", "Epi, Derme, Hipoderme", "Pelo, Carne, Osso"], correct: 1, why: "Epiderme (fora), Derme (meio), Hipoderme (gordura no fundo)." },
-        { q: "O que acontece se o curativo estiver muito apertado?", options: ["Cicatriz rápido", "Necrose e Inchaço", "Não muda nada"], correct: 1, why: "O aperto corta o sangue e pode matar a pele (necrose)." },
-        { q: "Por que vacinar gatos nas patas?", options: ["Evitar Sarcoma Vacinal", "Absorve melhor", "É regra de beleza"], correct: 0, why: "Gatos podem ter tumores no local da vacina; na pata é mais fácil tratar." },
-        { q: "Qual coleta de urina é melhor para cultura?", options: ["No chão", "Pote comum", "Cistocentese"], correct: 2, why: "A agulha direto na bexiga pega a urina sem contaminação externa." },
-        { q: "Informação obrigatória na amostra:", options: ["Cor do bicho", "Nome, Data e Hora", "Nome do dono apenas"], correct: 1, why: "Sem identificação completa, o exame não tem validade laboratorial." }
+        { q: "Quais as principais funções dos ossos?", options: ["Apenas estética", "Sustentação e Proteção", "Digestão de cálcio"], correct: 1, why: "Os ossos seguram o corpo em pé e protegem órgãos como cérebro e pulmões." },
+        { q: "O que caracteriza a Sístole cardíaca?", options: ["Relaxamento do músculo", "Contração e expulsão do sangue", "Parada do batimento"], correct: 1, why: "Na sístole, o coração 'aperta' para bombear o sangue para fora." },
+        { q: "Qual a sequência correta da pele (fora para dentro)?", options: ["Epiderme, Derme, Hipoderme", "Derme, Epiderme, Hipoderme", "Hipoderme, Derme, Epiderme"], correct: 0, why: "Epiderme é a camada que vemos, Derme fica no meio e Hipoderme é a gordura profunda." },
+        { q: "Por que vacinar gatos nos membros (pernas)?", options: ["Absorção mais lenta", "Evitar e tratar Sarcoma Vacinal", "Dói menos"], correct: 1, why: "Gatos podem desenvolver tumores no local da vacina; nas pernas é mais seguro tratar." },
+        { q: "O que deve constar na identificação de uma amostra?", options: ["Só a cor", "Nome do bicho, Data, Hora e Tipo", "Apenas o nome do tutor"], correct: 1, why: "Sem esses dados, o laboratório pode misturar os exames e errar o diagnóstico." }
     ];
 
     let current = 0, hits = 0, misses = 0;
@@ -157,12 +144,14 @@
 
         if(idx === q.correct) {
             btn.classList.add('correct');
-            exp.innerHTML = "<b>Acertou!</b> " + q.why;
+            exp.innerHTML = "✨ <b>Correto!</b> " + q.why;
+            exp.style.borderColor = "var(--green)";
             hits++;
         } else {
             btn.classList.add('wrong');
             all[q.correct].classList.add('correct');
-            exp.innerHTML = "<b>Opa!</b> " + q.why;
+            exp.innerHTML = "❌ <b>Atenção:</b> " + q.why;
+            exp.style.borderColor = "var(--red)";
             misses++;
         }
         document.getElementById('next-btn').style.display = 'block';
@@ -177,15 +166,19 @@
     function showFinal() {
         document.getElementById('screen-quiz').classList.remove('active');
         document.getElementById('screen-result').classList.add('active');
+        
         new Chart(document.getElementById('resultChart'), {
             type: 'pie',
             data: {
-                labels: ['Saboreou!', 'Ainda esquecendo'],
+                labels: ['Bom!', 'Melhorar'],
                 datasets: [{ data: [hits, misses], backgroundColor: ['#1cb0f6', '#ff4b4b'] }]
-            }
+            },
+            options: { plugins: { legend: { position: 'bottom' } } }
         });
+        
         const msg = document.getElementById('diag-msg');
-        msg.innerHTML = hits >= 5 ? "⭐ Parabéns! Você gravou bem as fotos!" : "📖 Recomendo ler as explicações azuis de novo.";
+        if(hits === questions.length) msg.innerHTML = "🏆 <span style='color:var(--primary-blue)'>EXCELENTE!</span><br>Você dominou todo o conteúdo das fotos!";
+        else msg.innerHTML = "📊 <span style='color:var(--dark-yellow)'>BOM TRABALHO!</span><br>Dê uma revisada nos blocos azuis e tente gabaritar!";
     }
 </script>
 </body>
