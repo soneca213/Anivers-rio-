@@ -1,632 +1,346 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>VetLingo - Super Revisão Veterinária</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-
-:root{
-    --blue:#1cb0f6;
-    --blue-dark:#1689bd;
-    --yellow:#ffc800;
-    --yellow-dark:#e0b000;
-    --green:#58cc02;
-    --red:#ff4b4b;
-    --bg:#f5f7fb;
-    --white:#ffffff;
-    --text:#3c3c3c;
-    --gray:#dcdcdc;
-}
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    font-family:'Segoe UI',sans-serif;
-    background:linear-gradient(135deg,#eef5ff,#f7fbff);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
-    padding:20px;
-    color:var(--text);
-}
-
-.container{
-    width:100%;
-    max-width:750px;
-    background:var(--white);
-    border-radius:30px;
-    padding:30px;
-    box-shadow:0 15px 40px rgba(0,0,0,.1);
-    animation:fade .5s ease;
-}
-
-@keyframes fade{
-    from{
-        opacity:0;
-        transform:translateY(15px);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-.screen{
-    display:none;
-}
-
-.active{
-    display:block;
-}
-
-.title{
-    text-align:center;
-    color:var(--blue);
-    margin-bottom:25px;
-    font-size:2rem;
-}
-
-.lesson-card{
-    background:#f7fbff;
-    border-left:8px solid var(--blue);
-    border-radius:20px;
-    padding:20px;
-    margin-bottom:20px;
-    transition:.3s;
-}
-
-.lesson-card:hover{
-    transform:translateY(-3px);
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-}
-
-.lesson-card h3{
-    margin-bottom:12px;
-    color:var(--blue-dark);
-}
-
-.lesson-card p{
-    line-height:1.6;
-    font-size:15px;
-}
-
-.progress-container{
-    width:100%;
-    height:18px;
-    background:#ececec;
-    border-radius:20px;
-    overflow:hidden;
-    margin-bottom:25px;
-}
-
-.progress-fill{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,var(--blue),#54d2ff);
-    transition:.4s;
-}
-
-.question{
-    margin-bottom:25px;
-    font-size:1.5rem;
-}
-
-.option-btn{
-    width:100%;
-    padding:18px;
-    margin:10px 0;
-    border:none;
-    border-radius:18px;
-    background:#fff;
-    border:2px solid var(--gray);
-    cursor:pointer;
-    font-size:16px;
-    font-weight:600;
-    text-align:left;
-    transition:.25s;
-}
-
-.option-btn:hover{
-    transform:scale(1.02);
-    background:#f8fcff;
-}
-
-.correct{
-    background:#dfffc7 !important;
-    border-color:var(--green) !important;
-    color:#2d8600;
-}
-
-.wrong{
-    background:#ffdede !important;
-    border-color:var(--red) !important;
-    color:#c10000;
-}
-
-.explanation{
-    margin-top:20px;
-    padding:20px;
-    border-radius:18px;
-    background:#f8f8f8;
-    display:none;
-    line-height:1.7;
-    border:2px solid #ececec;
-}
-
-.main-btn{
-    width:100%;
-    padding:20px;
-    border:none;
-    border-radius:20px;
-    background:var(--yellow);
-    color:#333;
-    font-size:18px;
-    font-weight:900;
-    cursor:pointer;
-    margin-top:20px;
-    transition:.2s;
-    box-shadow:0 6px 0 var(--yellow-dark);
-}
-
-.main-btn:hover{
-    transform:translateY(-2px);
-}
-
-.main-btn:active{
-    transform:translateY(4px);
-    box-shadow:0 2px 0 var(--yellow-dark);
-}
-
-.result-box{
-    text-align:center;
-}
-
-.result-text{
-    margin-top:20px;
-    font-size:1.2rem;
-    font-weight:bold;
-}
-
-.score{
-    font-size:2.5rem;
-    color:var(--blue);
-    margin:15px 0;
-}
-
-@media(max-width:600px){
-
-    .container{
-        padding:20px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Validação Experimental</title>
+  <style>
+    :root {
+      --primary: #0056b3;
+      --primary-hover: #004085;
+      --bg-color: #f4f7f6;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --text-muted: #666666;
+      --border-color: #e2e8f0;
+      --success-bg: #e6fffa;
+      --success-border: #b2f5ea;
+      --success-text: #234e52;
     }
 
-    .title{
-        font-size:1.6rem;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .question{
-        font-size:1.2rem;
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
     }
 
-    .option-btn{
-        font-size:15px;
+    .container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      border-top: 6px solid var(--primary);
     }
-}
 
-</style>
+    .step {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .step.active {
+      display: flex;
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-size: 1.4rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    /* Caixa de Preço */
+    .price-card {
+      background-color: #eef6ff;
+      border: 1px solid #b8daff;
+      border-radius: 8px;
+      padding: 20px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .price-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .price-installment {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    /* Caixa dos Termos */
+    .terms-box {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 15px;
+      height: 160px;
+      overflow-y: auto;
+      text-align: left;
+      font-size: 0.85rem;
+      background: #fafafa;
+      margin-bottom: 15px;
+    }
+
+    .terms-box p {
+      color: #444;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+    }
+
+    .experiment-alert {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      color: #856404;
+      padding: 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .checkbox-container input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    /* Câmera e Imagem */
+    .camera-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    video, canvas, img {
+      width: 100%;
+      max-width: 320px;
+      height: 240px;
+      border-radius: 8px;
+      background-color: #000;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+
+    /* Formulario */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+    }
+
+    /* Botão */
+    button {
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.2s;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    /* Animação de Spinner */
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      animation: spin 1s linear infinite;
+      margin: 25px 0;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
-
 <body>
 
 <div class="container">
 
-<!-- INTRO -->
-<div id="intro" class="screen active">
+  <!-- ETAPA 1: Carregamento Inicial -->
+  <div class="step active" id="step-1">
+    <h2>Iniciando o Sistema</h2>
+    <div class="spinner"></div>
+    <p>Aguarde um instante enquanto carregamos as configurações...</p>
+  </div>
 
-<h1 class="title">📖 Super Revisão Veterinária</h1>
+  <!-- ETAPA 2: Exibição do Valor -->
+  <div class="step" id="step-2">
+    <h2>Resumo das Condições</h2>
+    <p>Confira os detalhes de valor para dar prosseguimento:</p>
+    <div class="price-card">
+      <div class="price-value">R$ 350,00</div>
+      <div class="price-installment">em até <strong>12x de R$ 29,16</strong></div>
+    </div>
+    <button onclick="goToStep('step-3')">Prosseguir para os Termos</button>
+  </div>
 
-<div class="lesson-card">
-<h3>🦴 Ossos e Coração</h3>
-<p>
-Os ossos sustentam e protegem o corpo.
-A sístole é a contração do coração e a diástole é o relaxamento.
-</p>
-</div>
+  <!-- ETAPA 3: Termos de Compromisso -->
+  <div class="step" id="step-3">
+    <h2>Termos e Compromisso</h2>
+    <div class="terms-box">
+      <p><strong>1. OBJETO E ABRANGÊNCIA:</strong> Este documento estabelece as regras para acesso e utilização das funcionalidades fornecidas por esta interface de validação.</p>
+      <p><strong>2. USO DE DADOS FACIAIS:</strong> A captura da imagem do rosto é realizada exclusivamente para autenticação temporária nesta demonstração interativa.</p>
+      <p><strong>3. RESPONSABILIDADE:</strong> O usuário declara que as informações prestadas são verdadeiras e que está de acordo com as etapas do processo.</p>
+      <div class="experiment-alert">
+        Atenção: Este sistema é estritamente um EXPERIMENTO de interface e testes funcionais.
+      </div>
+    </div>
+    <label class="checkbox-container">
+      <input type="checkbox" id="check-terms" onchange="toggleButton()">
+      Li e concordo com os termos e o aviso de experimento.
+    </label>
+    <button id="btn-terms" disabled onclick="startCamera()">Aceitar e Tirar Foto</button>
+  </div>
 
-<div class="lesson-card">
-<h3>🩹 Pele e Curativos</h3>
-<p>
-A hipoderme possui gordura.
-Curativos apertados podem causar necrose.
-</p>
-</div>
+  <!-- ETAPA 4: Tirar Foto -->
+  <div class="step" id="step-4">
+    <h2>Validação de Rosto</h2>
+    <p>Posicione seu rosto em frente à câmera e clique no botão abaixo:</p>
+    <div class="camera-container">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="canvas" style="display:none;"></canvas>
+    </div>
+    <button onclick="capturePhoto()">Tirar Foto</button>
+  </div>
 
-<div class="lesson-card">
-<h3>💉 Exames Veterinários</h3>
-<p>
-A cistocentese é o melhor método para coleta de urina.
-Toda amostra precisa de nome, data e hora.
-</p>
-</div>
+  <!-- ETAPA 5: Confirmar Nome -->
+  <div class="step" id="step-5">
+    <h2>Confirmação do Nome</h2>
+    <p>Foto capturada com sucesso! Agora, digite seu nome completo para confirmar:</p>
+    <input type="text" id="user-name" placeholder="Digite seu nome aqui">
+    <button onclick="submitData()">Confirmar Dados</button>
+  </div>
 
-<button class="main-btn" onclick="startQuiz()">
-Começar Revisão
-</button>
-
-</div>
-
-<!-- QUIZ -->
-<div id="quiz" class="screen">
-
-<div class="progress-container">
-<div class="progress-fill" id="progress"></div>
-</div>
-
-<h2 class="question" id="question">
-Pergunta
-</h2>
-
-<div id="options"></div>
-
-<div class="explanation" id="explanation"></div>
-
-<button id="nextBtn" class="main-btn" style="display:none;">
-Próxima Pergunta
-</button>
-
-</div>
-
-<!-- RESULTADO -->
-<div id="result" class="screen result-box">
-
-<h1 class="title">🏆 Resultado Final</h1>
-
-<div class="score" id="scoreText"></div>
-
-<canvas id="chart"></canvas>
-
-<div class="result-text" id="resultText"></div>
-
-<button class="main-btn" onclick="location.reload()">
-Refazer Quiz
-</button>
-
-</div>
+  <!-- ETAPA 6: Sucesso -->
+  <div class="step" id="step-6">
+    <h2>Confirmação Concluída!</h2>
+    <p>Sua validação foi registrada no sistema com sucesso.</p>
+    <div class="price-card" style="background-color: var(--success-bg); border-color: var(--success-border);">
+      <strong id="display-name" style="color: var(--success-text); font-size: 1.1rem;"></strong>
+    </div>
+    <p style="font-size: 1.1rem; color: var(--primary); font-weight: 600;">Agora é só esperar!</p>
+  </div>
 
 </div>
 
 <script>
-
-const questions = [
-
-{
-q: "Qual a principal função dos ossos no corpo animal?",
-options: [
-"Sustentar e proteger o corpo",
-"Apenas ajudar na beleza",
-"Produzir alimento"
-],
-correct: 0,
-
-why: `
-🦴 <b>Explicação Completa:</b><br><br>
-
-Os ossos possuem várias funções importantes:
-<ul>
-<li>✔️ Sustentar o corpo</li>
-<li>✔️ Proteger órgãos importantes</li>
-<li>✔️ Ajudar nos movimentos</li>
-<li>✔️ Produzir células sanguíneas</li>
-</ul>
-
-📌 Sem os ossos o corpo não teria estrutura.
-`
-},
-
-{
-q: "O que acontece durante a sístole cardíaca?",
-options: [
-"O coração relaxa",
-"O coração para",
-"O coração contrai e bombeia sangue"
-],
-correct: 2,
-
-why: `
-❤️ <b>Explicação Completa:</b><br><br>
-
-Na <b>Sístole</b> o coração:
-<ul>
-<li>✔️ Se contrai</li>
-<li>✔️ Bombeia sangue</li>
-<li>✔️ Envia oxigênio para o corpo</li>
-</ul>
-
-📌 Já a Diástole é quando ele relaxa.
-`
-},
-
-{
-q: "Qual camada da pele possui gordura?",
-options: [
-"Derme",
-"Hipoderme",
-"Epiderme"
-],
-correct: 1,
-
-why: `
-🩹 <b>Explicação Completa:</b><br><br>
-
-A <b>Hipoderme</b>:
-<ul>
-<li>✔️ Possui gordura</li>
-<li>✔️ Protege contra impactos</li>
-<li>✔️ Ajuda no controle da temperatura</li>
-</ul>
-
-📌 É a camada mais profunda da pele.
-`
-},
-
-{
-q: "O que um curativo muito apertado pode causar?",
-options: [
-"Cicatrização rápida",
-"Nada",
-"Necrose e falta de circulação"
-],
-correct: 2,
-
-why: `
-⚠️ <b>Explicação Completa:</b><br><br>
-
-Curativos apertados:
-<ul>
-<li>❌ Impedem circulação do sangue</li>
-<li>❌ Causam dor e inchaço</li>
-<li>❌ Podem provocar necrose</li>
-</ul>
-
-📌 Necrose significa morte do tecido.
-`
-},
-
-{
-q: "Por que vacinas em gatos são aplicadas nos membros?",
-options: [
-"Para evitar problemas graves",
-"Porque dói menos",
-"Porque é mais rápido"
-],
-correct: 0,
-
-why: `
-💉 <b>Explicação Completa:</b><br><br>
-
-Alguns gatos podem desenvolver tumores raros após vacinas.
-Aplicar nos membros facilita:
-<ul>
-<li>✔️ Tratamento</li>
-<li>✔️ Cirurgias</li>
-<li>✔️ Controle da doença</li>
-</ul>
-
-📌 Isso protege a saúde do animal.
-`
-},
-
-{
-q: "Qual o melhor método de coleta de urina?",
-options: [
-"Pote comum",
-"Cistocentese",
-"Coleta do chão"
-],
-correct: 1,
-
-why: `
-🧪 <b>Explicação Completa:</b><br><br>
-
-A <b>Cistocentese</b>:
-<ul>
-<li>✔️ Usa agulha diretamente na bexiga</li>
-<li>✔️ Evita contaminação</li>
-<li>✔️ Garante exame mais confiável</li>
-</ul>
-
-📌 Muito usada em clínicas veterinárias.
-`
-},
-
-{
-q: "O que é obrigatório em uma amostra laboratorial?",
-options: [
-"Cor do animal",
-"Nome, data e hora",
-"Brinquedo favorito"
-],
-correct: 1,
-
-why: `
-📋 <b>Explicação Completa:</b><br><br>
-
-Toda amostra precisa:
-<ul>
-<li>✔️ Nome</li>
-<li>✔️ Data</li>
-<li>✔️ Hora da coleta</li>
-</ul>
-
-📌 Sem identificação correta o laboratório pode descartar a amostra.
-`
-}
-
-];
-
-let current = 0;
-let hits = 0;
-
-const question = document.getElementById("question");
-const options = document.getElementById("options");
-const explanation = document.getElementById("explanation");
-const progress = document.getElementById("progress");
-const nextBtn = document.getElementById("nextBtn");
-
-function startQuiz(){
-
-document.getElementById("intro").classList.remove("active");
-document.getElementById("quiz").classList.add("active");
-
-loadQuestion();
-
-}
-
-function loadQuestion(){
-
-const q = questions[current];
-
-question.innerHTML = `${current + 1}. ${q.q}`;
-
-options.innerHTML = "";
-
-explanation.style.display = "none";
-
-nextBtn.style.display = "none";
-
-progress.style.width =
-`${(current / questions.length) * 100}%`;
-
-q.options.forEach((opt,index)=>{
-
-const btn = document.createElement("button");
-
-btn.classList.add("option-btn");
-
-btn.innerHTML = opt;
-
-btn.onclick = ()=>checkAnswer(index,btn);
-
-options.appendChild(btn);
-
-});
-
-}
-
-function checkAnswer(index,btn){
-
-const q = questions[current];
-
-const allBtns =
-document.querySelectorAll(".option-btn");
-
-allBtns.forEach(b=>b.disabled = true);
-
-explanation.style.display = "block";
-
-if(index === q.correct){
-
-btn.classList.add("correct");
-
-hits++;
-
-explanation.innerHTML =
-`✅ <b>Resposta Correta!</b><br><br>${q.why}`;
-
-}else{
-
-btn.classList.add("wrong");
-
-allBtns[q.correct]
-.classList.add("correct");
-
-explanation.innerHTML =
-`❌ <b>Resposta Errada!</b><br><br>${q.why}`;
-
-}
-
-nextBtn.style.display = "block";
-
-}
-
-nextBtn.onclick = ()=>{
-
-current++;
-
-if(current < questions.length){
-
-loadQuestion();
-
-}else{
-
-showResult();
-
-}
-
-};
-
-function showResult(){
-
-document.getElementById("quiz")
-.classList.remove("active");
-
-document.getElementById("result")
-.classList.add("active");
-
-const percent =
-Math.round((hits / questions.length) * 100);
-
-document.getElementById("scoreText")
-.innerHTML = `${percent}%`;
-
-const text =
-document.getElementById("resultText");
-
-if(percent === 100){
-
-text.innerHTML =
-"🏆 Excelente! Você domina o conteúdo veterinário!";
-
-}else if(percent >= 70){
-
-text.innerHTML =
-"👏 Muito bom! Você está quase dominando tudo.";
-
-}else{
-
-text.innerHTML =
-"📚 Continue estudando para melhorar ainda mais.";
-}
-
-new Chart(document.getElementById("chart"),{
-
-type:"doughnut",
-
-data:{
-labels:["Acertos","Erros"],
-
-datasets:[{
-data:[hits,questions.length - hits],
-backgroundColor:[
-"#1cb0f6",
-"#ff4b4b"
-]
-}]
-}
-
-});
-
-}
-
+  // Transição automática da tela inicial (Simulando carregamento de 2.5s)
+  setTimeout(() => {
+    goToStep('step-2');
+  }, 2500);
+
+  // Função para navegar entre as etapas
+  function goToStep(stepId) {
+    document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+    document.getElementById(stepId).classList.add('active');
+  }
+
+  // Habilita o botão apenas após aceitar os termos
+  function toggleButton() {
+    const isChecked = document.getElementById('check-terms').checked;
+    document.getElementById('btn-terms').disabled = !isChecked;
+  }
+
+  // Ativa a câmera do dispositivo
+  async function startCamera() {
+    goToStep('step-4');
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      document.getElementById('video').srcObject = stream;
+    } catch (err) {
+      alert("Permissão de câmera necessária. Por favor, permita o acesso para prosseguir.");
+    }
+  }
+
+  // Tira a foto e encerra a câmera
+  function capturePhoto() {
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+
+    canvas.width = video.videoWidth || 320;
+    canvas.height = video.videoHeight || 240;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Desliga a câmera
+    const stream = video.srcObject;
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+    }
+
+    goToStep('step-5');
+  }
+
+  // Finaliza a gravação dos dados e exibe a tela de sucesso
+  function submitData() {
+    const name = document.getElementById('user-name').value.trim();
+    if (name === "") {
+      alert("Por favor, digite o seu nome antes de prosseguir.");
+      return;
+    }
+
+    document.getElementById('display-name').innerText = `Cadastro realizado para: ${name}`;
+    goToStep('step-6');
+  }
 </script>
 
 </body>
