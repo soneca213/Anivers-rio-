@@ -3,417 +3,458 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Sistema de Autenticação Segura</title>
+  <title>Verificação de Segurança</title>
   <style>
     :root {
-      --primary-blue: #003366;
-      --accent-blue: #0052cc;
-      --bg-light: #f8fafc;
+      --navy-main: #0a192f;
+      --bank-blue: #0052ff;
+      --bank-blue-hover: #0043cb;
+      --bg-gray: #f4f6f9;
       --card-white: #ffffff;
-      --text-main: #1e293b;
-      --text-sub: #64748b;
+      --text-dark: #1e293b;
+      --text-gray: #64748b;
       --border-gray: #e2e8f0;
-      --success-green: #059669;
+      --green-success: #10b981;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
     html, body {
       width: 100%;
       height: 100%;
-      background-color: var(--bg-light);
-      color: var(--text-main);
-      overflow-x: hidden;
+      background-color: #0d1117;
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .app-viewport {
-      width: 100vw;
-      min-height: 100vh;
+    /* Container simulando tela cheia do App Mobile */
+    .app-screen {
+      width: 100%;
+      max-width: 440px;
+      height: 100vh;
+      max-height: 900px;
+      background: var(--bg-gray);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: var(--card-white);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     }
 
-    @media (min-width: 768px) {
-      .app-viewport {
-        max-width: 480px;
-        min-height: 100vh;
-        margin: 0 auto;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    @media (min-width: 441px) {
+      .app-screen {
+        height: 95vh;
+        border-radius: 24px;
+        border: 4px solid #1e293b;
       }
     }
 
-    /* Header Corporativo */
-    .app-header {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--border-gray);
+    /* Cabeçalho de Segurança Bancária */
+    .bank-header {
+      background: var(--navy-main);
+      color: #ffffff;
+      padding: 16px 20px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .top-bar {
+      display: flex;
       justify-content: space-between;
-      background-color: var(--card-white);
+      align-items: center;
     }
 
-    .brand-logo {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: var(--primary-blue);
+    .bank-logo {
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 1px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .brand-badge {
-      background: #e0edff;
-      color: var(--accent-blue);
-      font-size: 0.65rem;
-      padding: 2px 6px;
-      border-radius: 4px;
+    .secure-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green-success);
+      padding: 4px 8px;
+      border-radius: 20px;
       font-weight: 600;
-      text-transform: uppercase;
     }
 
-    /* Modulo das Etapas */
-    .step-content {
-      display: none;
+    /* Barra de Progresso */
+    .progress-bar-container {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 20%;
+      background: var(--bank-blue);
+      transition: width 0.4s ease;
+    }
+
+    /* Área Principal de Conteúdo */
+    .main-content {
       flex: 1;
-      padding: 32px 24px;
+      padding: 24px 20px;
+      display: flex;
       flex-direction: column;
       justify-content: center;
-      animation: fadeIn 0.3s ease-in-out;
+      overflow-y: auto;
     }
 
-    .step-content.active {
-      display: flex;
+    .step {
+      display: none;
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+    .step.active {
+      display: block;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    h1 {
-      font-size: 1.5rem;
+    h2 {
+      font-size: 1.35rem;
       font-weight: 700;
-      color: var(--primary-blue);
-      margin-bottom: 8px;
-      letter-spacing: -0.3px;
+      color: var(--navy-main);
+      margin-bottom: 6px;
     }
 
-    p.subtitle {
-      font-size: 0.95rem;
-      color: var(--text-sub);
-      line-height: 1.5;
-      margin-bottom: 28px;
-    }
-
-    /* Cartão de Valor */
-    .summary-card {
-      background: #f1f5f9;
-      border: 1px solid var(--border-gray);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-
-    .summary-label {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: var(--text-sub);
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-
-    .summary-amount {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: var(--primary-blue);
-      letter-spacing: -1px;
-    }
-
-    .summary-details {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed var(--border-gray);
-      font-size: 0.9rem;
-      color: var(--text-main);
-    }
-
-    /* Termos e Condições Ligas */
-    .terms-wrapper {
-      border: 1px solid var(--border-gray);
-      border-radius: 8px;
-      padding: 16px;
-      height: 220px;
-      overflow-y: auto;
-      background: #fafafa;
-      font-size: 0.82rem;
-      line-height: 1.6;
-      color: #475569;
-      margin-bottom: 20px;
-      text-align: justify;
-    }
-
-    .terms-wrapper p {
-      margin-bottom: 12px;
-    }
-
-    /* Checkbox Estilizado */
-    .checkbox-wrapper {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 24px;
-      cursor: pointer;
-    }
-
-    .checkbox-wrapper input {
-      width: 20px;
-      height: 20px;
-      margin-top: 2px;
-      accent-color: var(--accent-blue);
-      cursor: pointer;
-    }
-
-    .checkbox-label {
+    .step-desc {
       font-size: 0.88rem;
-      color: var(--text-sub);
+      color: var(--text-gray);
+      margin-bottom: 20px;
       line-height: 1.4;
     }
 
-    /* Frame da Câmera */
-    .camera-frame {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      background: #0f172a;
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    /* Cartão de Resumo da Transação */
+    .transaction-card {
+      background: var(--card-white);
+      border-radius: 16px;
+      padding: 20px;
       border: 1px solid var(--border-gray);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      margin-bottom: 20px;
     }
 
-    video, canvas {
+    .tx-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.88rem;
+    }
+
+    .tx-row:last-child {
+      border-bottom: none;
+    }
+
+    .tx-label { color: var(--text-gray); }
+    .tx-val { font-weight: 600; color: var(--text-dark); }
+    .tx-val.highlight { color: var(--bank-blue); font-size: 1.3rem; font-weight: 800; }
+
+    /* Caixa de Termos Legais */
+    .terms-card {
+      background: var(--card-white);
+      border: 1px solid var(--border-gray);
+      border-radius: 12px;
+      padding: 14px;
+      height: 200px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+      color: #475569;
+      line-height: 1.5;
+      margin-bottom: 16px;
+      text-align: justify;
+    }
+
+    .terms-card p { margin-bottom: 10px; }
+
+    .check-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .check-container input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--bank-blue);
+    }
+
+    .check-text {
+      font-size: 0.82rem;
+      color: var(--text-gray);
+      line-height: 1.3;
+    }
+
+    /* Câmera Biométrica Inteligente */
+    .biometric-box {
+      position: relative;
+      width: 240px;
+      height: 240px;
+      margin: 0 auto 20px auto;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid var(--bank-blue);
+      box-shadow: 0 0 0 8px rgba(0, 82, 255, 0.15);
+      background: #000;
+    }
+
+    video {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .camera-guide {
+    .scanner-line {
       position: absolute;
-      width: 180px;
-      height: 220px;
-      border: 2px dashed rgba(255, 255, 255, 0.5);
-      border-radius: 50%;
-      pointer-events: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--bank-blue), transparent);
+      box-shadow: 0 0 8px var(--bank-blue);
+      animation: scan 2s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { top: 0%; }
+      50% { top: 100%; }
+      100% { top: 0%; }
     }
 
     /* Formulário */
-    .input-group {
-      margin-bottom: 24px;
+    .form-group {
+      margin-bottom: 16px;
     }
 
-    .input-group label {
+    .form-group label {
       display: block;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-gray);
+      margin-bottom: 6px;
     }
 
-    .input-field {
+    .form-input {
       width: 100%;
       padding: 14px 16px;
+      background: var(--card-white);
       border: 1px solid var(--border-gray);
-      border-radius: 8px;
-      font-size: 1rem;
-      background: #ffffff;
-      color: var(--text-main);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      color: var(--text-dark);
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
     }
 
-    .input-field:focus {
-      border-color: var(--accent-blue);
+    .form-input:focus {
+      border-color: var(--bank-blue);
+      box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.1);
     }
 
-    /* Ações / Botões */
-    .action-area {
-      padding: 20px 24px 32px 24px;
-      background-color: var(--card-white);
+    /* Botão Fixo Inferior */
+    .bottom-actions {
+      padding: 16px 20px 24px 20px;
+      background: var(--card-white);
+      border-top: 1px solid var(--border-gray);
     }
 
-    .btn-primary {
+    .btn-bank {
       width: 100%;
-      background: var(--accent-blue);
+      background: var(--bank-blue);
       color: #ffffff;
       border: none;
       padding: 16px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 600;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
       cursor: pointer;
       transition: background 0.2s;
-    }
-
-    .btn-primary:hover {
-      background: #0043a8;
-    }
-
-    .btn-primary:disabled {
-      background: #cbd5e1;
-      cursor: not-allowed;
-    }
-
-    /* Carregamento */
-    .loader-container {
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
-      padding: 40px 0;
+      align-items: center;
+      gap: 8px;
     }
 
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid #e2e8f0;
-      border-top-color: var(--accent-blue);
+    .btn-bank:hover { background: var(--bank-blue-hover); }
+    .btn-bank:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+    /* Loader Tela 1 */
+    .loader-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e2e8f0;
+      border-top-color: var(--bank-blue);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
-      margin-bottom: 20px;
+      margin: 0 auto 16px auto;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .success-icon {
-      width: 64px;
-      height: 64px;
-      background: #dcfce7;
-      color: var(--success-green);
+    .success-badge {
+      width: 72px;
+      height: 72px;
+      background: #d1fae5;
+      color: var(--green-success);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin: 0 auto 20px auto;
     }
   </style>
 </head>
 <body>
 
-<div class="app-viewport">
+<div class="app-screen">
 
-  <!-- Header -->
-  <header class="app-header">
-    <div class="brand-logo">
-      <span>BANCO DIGITAL</span>
-      <span class="brand-badge">SEGURANÇA</span>
+  <!-- Header Institucional -->
+  <header class="bank-header">
+    <div class="top-bar">
+      <div class="bank-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        SISTEMA BANCÁRIO
+      </div>
+      <div class="secure-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        SSL 256-bit
+      </div>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar-fill" id="progress-bar"></div>
     </div>
   </header>
 
-  <!-- ETAPA 1: Carregamento Inicial -->
-  <div class="step-content active" id="step-1">
-    <div class="loader-container">
-      <div class="spinner"></div>
-      <h1>Iniciando sessão segura</h1>
-      <p class="subtitle" style="margin-bottom: 0;">Aguarde o estabelecimento de conexão com o servidor...</p>
-    </div>
-  </div>
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
 
-  <!-- ETAPA 2: Exibição de Valores -->
-  <div class="step-content" id="step-2">
-    <h1>Resumo da Operação</h1>
-    <p class="subtitle">Confira os valores e condições contratuais acordados antes de dar prosseguimento ao registro.</p>
-    
-    <div class="summary-card">
-      <div class="summary-label">Valor Total da Operação</div>
-      <div class="summary-amount">R$ 350,00</div>
-      <div class="summary-details">
-        Parcelamento: <strong>12x de R$ 29,16</strong> sem juros
+    <!-- ETAPA 1: Carregando -->
+    <div class="step active" id="step-1" style="text-align: center;">
+      <div class="loader-spinner"></div>
+      <h2>Estabelecendo Conexão Segura</h2>
+      <p class="step-desc">Aguarde enquanto validamos a sessão com a central de segurança...</p>
+    </div>
+
+    <!-- ETAPA 2: Resumo Financeiro -->
+    <div class="step" id="step-2">
+      <h2>Resumo do Lançamento</h2>
+      <p class="step-desc">Confira os valores da transação antes de prosseguir com a autenticação.</p>
+
+      <div class="transaction-card">
+        <div class="tx-row">
+          <span class="tx-label">Valor do Contrato</span>
+          <span class="tx-val highlight">R$ 350,00</span>
+        </div>
+        <div class="tx-row">
+          <span class="tx-label">Condição de Pagamento</span>
+          <span class="tx-val">10x de R$ 115,00 </span>
+        </div>
+        <div class="tx-row">
+          <span class="tx-label">Taxa de Operação</span>
+          <span class="tx-val" style="color: var(--green-success);">Isento (R$ 0,00)</span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ETAPA 3: Termos de Compromisso -->
-  <div class="step-content" id="step-3">
-    <h1>Termos e Condições</h1>
-    <p class="subtitle">Leia atentamente o regulamento operacional abaixo.</p>
-    
-    <div class="terms-wrapper">
-      <p>Este documento regula as condições gerais do serviço prestado pela plataforma digital. Ao prosseguir com a utilização desta interface interativa, o usuário declara estar ciente e de acordo com todas as disposições apresentadas neste regulamento de uso.</p>
-      
-      <p>Primeira cláusula: O acesso às funcionalidades descritas no ambiente digital demanda a leitura e concordância prévia de todos os termos técnicos dispostos no protocolo de adesão. Todos os dados coletados durante o fluxo operacional são protegidos de acordo com as diretrizes de governança de dados da instituição financeira responsável.</p>
-      
-      <p>Segunda cláusula: Fica estabelecido que esta operação faz parte do procedimento experimental de testes operacionais de interface e validação de usabilidade (UI/UX), destinado à homologação técnica das etapas do sistema de navegação e coleta de biometria facial temporária para fins estatísticos de desenvolvimento.</p>
-      
-      <p>Terceira cláusula: A confirmação das etapas seguintes implica a autorização expressa da captura biométrica da imagem facial, utilizada unicamente para o ciclo de verificação técnica da presente sessão, garantindo a integridade dos processos e a prevenção contra acessos não autorizados durante o fluxo.</p>
-      
-      <p>Quarta cláusula: As condições financeiras previamente visualizadas, correspondentes ao valor global de R$ 350,00 divididos em 12 parcelas de R$ 29,16, são de caráter simulativo dentro da infraestrutura de validação, permitindo que a funcionalidade final seja devidamente testada e documentada.</p>
+    <!-- ETAPA 3: Termos e Condições Legais -->
+    <div class="step" id="step-3">
+      <h2>Termos de Adesão</h2>
+      <p class="step-desc">Leia os termos contratuais para liberar a verificação facial.</p>
+
+      <div class="terms-card">
+        <p><strong>CLÁUSULA PRIMEIRA - DO OBJETO:</strong> O presente instrumento define as regras para a prestação de serviços de autenticação e validação de titularidade em ambiente digital por meio da infraestrutura bancária.</p>
+        
+        <p><strong>CLÁUSULA SEGUNDA - DA BIOMETRIA:</strong> O usuário autoriza expressamente a coleta e processamento de imagem facial para fins exclusivos de validação biométrica preventiva contra fraudes e acesso não autorizado durante esta sessão.</p>
+
+        <p><strong>CLÁUSULA TERCEIRA - DO AMBIENTE EXPERIMENTAL:</strong> Fica estipulado que este procedimento constitui um teste operacional de ambiente experimental destinado à homologação de usabilidade, fluxo de interface e calibração do tempo de resposta do sistema biométrico.</p>
+
+        <p><strong>CLÁUSULA QUARTA - DAS OBRIGAÇÕES:</strong> O titular garante a veracidade de todas as informações prestadas durante o processo de verificação, declarando-se ciente dos valores simulados no importe de R$ 350,00 divididos em 12 parcelas mensais de R$ 29,16.</p>
+      </div>
+
+      <label class="check-container">
+        <input type="checkbox" id="chk-terms" onchange="toggleTermsBtn()">
+        <span class="check-text">Declaro que li e concordo integralmente com os termos contratuais e com as condições do teste experimental.</span>
+      </label>
     </div>
 
-    <label class="checkbox-wrapper">
-      <input type="checkbox" id="terms-check" onchange="toggleTermsButton()">
-      <span class="checkbox-label">Declaro que li e concordo com a totalidade dos termos contratuais e condições operacionais expostas.</span>
-    </label>
-  </div>
+    <!-- ETAPA 4: Validação Biométrica Facial -->
+    <div class="step" id="step-4" style="text-align: center;">
+      <h2>Reconhecimento Facial</h2>
+      <p class="step-desc">Centralize seu rosto no círculo abaixo. Mantenha um ambiente bem iluminado.</p>
 
-  <!-- ETAPA 4: Captura de Biometria Facial -->
-  <div class="step-content" id="step-4">
-    <h1>Validação Biométrica</h1>
-    <p class="subtitle">Posicione seu rosto dentro da marcação para captura do registro facial.</p>
-    
-    <div class="camera-frame">
-      <video id="webcam" autoplay playsinline></video>
-      <canvas id="photo-canvas" style="display: none;"></canvas>
-      <div class="camera-guide"></div>
+      <div class="biometric-box">
+        <video id="camera-feed" autoplay playsinline></video>
+        <div class="scanner-line"></div>
+      </div>
+      <canvas id="canvas-capture" style="display: none;"></canvas>
     </div>
-  </div>
 
-  <!-- ETAPA 5: Inserção de Nome -->
-  <div class="step-content" id="step-5">
-    <h1>Confirmação de Titularidade</h1>
-    <p class="subtitle">Imagem capturada com sucesso. Digite seu nome completo para associar ao registro.</p>
-    
-    <div class="input-group">
-      <label for="full-name">Nome do Titular</label>
-      <input type="text" id="full-name" class="input-field" placeholder="Digite seu nome completo" autocomplete="off">
-    </div>
-  </div>
+    <!-- ETAPA 5: Cadastro de Titularidade -->
+    <div class="step" id="step-5">
+      <h2>Identificação do Titular</h2>
+      <p class="step-desc">Biometria registrada. Informe os dados do titular para vincular a operação.</p>
 
-  <!-- ETAPA 6: Sucesso -->
-  <div class="step-content" id="step-6">
-    <div style="text-align: center;">
-      <div class="success-icon">✓</div>
-      <h1>Solicitação Processada!</h1>
-      <p class="subtitle" id="user-confirmation-text" style="margin-bottom: 12px;"></p>
-      
-      <div class="summary-card" style="margin-top: 24px; text-align: center;">
-        <span style="font-size: 1.1rem; color: var(--accent-blue); font-weight: 700;">Agora é só esperar!</span>
-        <p style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px; margin-bottom: 0;">Nossa equipe técnica processará sua validação em breve.</p>
+      <div class="form-group">
+        <label for="input-name">Nome Completo do Titular</label>
+        <input type="text" id="input-name" class="form-input" placeholder="Ex: João da Silva">
+      </div>
+
+      <div class="form-group">
+        <label for="input-cpf">CPF do Titular</label>
+        <input type="text" id="input-cpf" class="form-input" placeholder="000.000.000-00" maxlength="14">
       </div>
     </div>
-  </div>
 
-  <!-- Botões Inferiores Fixos -->
-  <footer class="action-area" id="action-footer">
-    <button class="btn-primary" id="btn-step-2" style="display: none;" onclick="navigateStep('step-3')">Avançar para Termos</button>
-    <button class="btn-primary" id="btn-step-3" style="display: none;" disabled onclick="initBiometrics()">Aceitar e Continuar</button>
-    <button class="btn-primary" id="btn-step-4" style="display: none;" onclick="captureBiometrics()">Capturar Biometria</button>
-    <button class="btn-primary" id="btn-step-5" style="display: none;" onclick="confirmUser()">Confirmar Registro</button>
+    <!-- ETAPA 6: Sucesso -->
+    <div class="step" id="step-6" style="text-align: center;">
+      <div class="success-badge">✓</div>
+      <h2>Validação Concluída!</h2>
+      <p class="step-desc" id="success-user-text"></p>
+
+      <div class="transaction-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+        <span style="font-size: 1.15rem; font-weight: 800; color: #166534;">Agora é só esperar!</span>
+        <p style="font-size: 0.82rem; color: #15803d; margin-top: 6px;">Sua solicitação foi enviada para processamento no sistema.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Rodapé com Botões de Ação -->
+  <footer class="bottom-actions" id="footer-actions" style="display: none;">
+    <button class="btn-bank" id="btn-next-2" onclick="setStep('step-3', 50)">Avançar para os Termos</button>
+    <button class="btn-bank" id="btn-next-3" disabled onclick="startBiometrics()">Aceitar e Iniciar Biometria</button>
+    <button class="btn-bank" id="btn-next-4" style="display: none;" onclick="captureFacialData()">Capturar Rosto</button>
+    <button class="btn-bank" id="btn-next-5" style="display: none;" onclick="finishValidation()">Finalizar e Confirmar</button>
   </footer>
 
 </div>
@@ -421,76 +462,84 @@
 <script>
   // Transição Inicial
   setTimeout(() => {
-    navigateStep('step-2');
-  }, 2500);
+    setStep('step-2', 30);
+  }, 2200);
 
-  // Navegação Global
-  function navigateStep(targetId) {
-    document.querySelectorAll('.step-content').forEach(element => {
-      element.classList.remove('active');
-    });
-    
-    document.getElementById(targetId).classList.add('active');
+  // Controle de Etapas e Barra de Progresso
+  function setStep(stepId, progressPercent) {
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    document.getElementById(stepId).classList.add('active');
+    document.getElementById('progress-bar').style.width = progressPercent + '%';
 
-    // Atualização dos botões
-    document.getElementById('btn-step-2').style.display = targetId === 'step-2' ? 'block' : 'none';
-    document.getElementById('btn-step-3').style.display = targetId === 'step-3' ? 'block' : 'none';
-    document.getElementById('btn-step-4').style.display = targetId === 'step-4' ? 'block' : 'none';
-    document.getElementById('btn-step-5').style.display = targetId === 'step-5' ? 'block' : 'none';
-    
-    if (targetId === 'step-6' || targetId === 'step-1') {
-      document.getElementById('action-footer').style.display = 'none';
+    const footer = document.getElementById('footer-actions');
+    const btn2 = document.getElementById('btn-next-2');
+    const btn3 = document.getElementById('btn-next-3');
+    const btn4 = document.getElementById('btn-next-4');
+    const btn5 = document.getElementById('btn-next-5');
+
+    // Reseta visibilidade dos botões
+    btn2.style.display = 'none';
+    btn3.style.display = 'none';
+    btn4.style.display = 'none';
+    btn5.style.display = 'none';
+
+    if (stepId === 'step-1' || stepId === 'step-6') {
+      footer.style.display = 'none';
     } else {
-      document.getElementById('action-footer').style.display = 'block';
+      footer.style.display = 'block';
+      if (stepId === 'step-2') btn2.style.display = 'flex';
+      if (stepId === 'step-3') btn3.style.display = 'flex';
+      if (stepId === 'step-4') btn4.style.display = 'flex';
+      if (stepId === 'step-5') btn5.style.display = 'flex';
     }
   }
 
-  // Desbloqueio dos Termos
-  function toggleTermsButton() {
-    const isChecked = document.getElementById('terms-check').checked;
-    document.getElementById('btn-step-3').disabled = !isChecked;
+  // Desbloqueio do Botão dos Termos
+  function toggleTermsBtn() {
+    const isChecked = document.getElementById('chk-terms').checked;
+    document.getElementById('btn-next-3').disabled = !isChecked;
   }
 
-  // Inicialização da Câmera
-  async function initBiometrics() {
-    navigateStep('step-4');
+  // Inicializar Câmera Facial
+  async function startBiometrics() {
+    setStep('step-4', 70);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false });
-      document.getElementById('webcam').srcObject = stream;
+      document.getElementById('camera-feed').srcObject = stream;
     } catch (err) {
-      alert("Para prosseguir é necessário autorizar a utilização da câmera.");
+      alert("Acesso à câmera é obrigatório para validação biométrica de segurança.");
     }
   }
 
-  // Captura da Imagem Biométrica
-  function captureBiometrics() {
-    const video = document.getElementById('webcam');
-    const canvas = document.getElementById('photo-canvas');
-    const context = canvas.getContext('2d');
+  // Captura da Foto
+  function captureFacialData() {
+    const video = document.getElementById('camera-feed');
+    const canvas = document.getElementById('canvas-capture');
+    const ctx = canvas.getContext('2d');
 
     canvas.width = video.videoWidth || 320;
     canvas.height = video.videoHeight || 240;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Encerra a transmissão da câmera
+    // Desliga a Câmera
     const stream = video.srcObject;
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
     }
 
-    navigateStep('step-5');
+    setStep('step-5', 90);
   }
 
-  // Confirmação do Nome e Conclusão
-  function confirmUser() {
-    const userName = document.getElementById('full-name').value.trim();
-    if (!userName) {
-      alert("Por favor, preencha o seu nome completo para validação do registro.");
+  // Conclusão do Processo
+  function finishValidation() {
+    const name = document.getElementById('input-name').value.trim();
+    if (!name) {
+      alert("Informe o seu nome completo para concluir a validação.");
       return;
     }
 
-    document.getElementById('user-confirmation-text').innerText = `Validação vinculada ao titular: ${userName}`;
-    navigateStep('step-6');
+    document.getElementById('success-user-text').innerText = `Registro biométrico confirmado para: ${name}`;
+    setStep('step-6', 100);
   }
 </script>
 
